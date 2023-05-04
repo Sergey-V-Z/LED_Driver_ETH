@@ -1,0 +1,63 @@
+Change Component Footprint: Designator=DG1 Old Footprint=15EDGRC-3.5-16P New Footprint=15EDGVC-3.5-16P
+Change Component Comment : Designator=DG1 Old Comment=15EDGRC-3.5-16P New Comment=15EDGVC-3.5-16P
+Change component parameters: Designator = "H1" ("H1"); Footprint = "Hole 3.5"; UniqueID = "\EYIZALBG" ("\EYIZALBG")
+Change component parameters (AddParameter): Name = ""; Value = "H*"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Comments"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "CompType"; Value = "Hole"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Note"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Package"; Value = "Hole"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "PartNumber"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Pins"; Value = "1"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "SnapEDA_Link"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Tolerance_Percent"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Voltage"; Value = ""; VariantName = "[No Variations]"
+Change component parameters: Designator = "H2" ("H2"); Footprint = "Hole 3.5"; UniqueID = "\DUSKPDNJ" ("\DUSKPDNJ")
+Change component parameters (AddParameter): Name = ""; Value = "H*"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Comments"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "CompType"; Value = "Hole"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Note"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Package"; Value = "Hole"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "PartNumber"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Pins"; Value = "1"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "SnapEDA_Link"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Tolerance_Percent"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Voltage"; Value = ""; VariantName = "[No Variations]"
+Change component parameters: Designator = "H3" ("H3"); Footprint = "Hole 3.5"; UniqueID = "\KTXTCHRU" ("\KTXTCHRU")
+Change component parameters (AddParameter): Name = ""; Value = "H*"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Comments"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "CompType"; Value = "Hole"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Note"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Package"; Value = "Hole"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "PartNumber"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Pins"; Value = "1"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "SnapEDA_Link"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Tolerance_Percent"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Voltage"; Value = ""; VariantName = "[No Variations]"
+Change component parameters: Designator = "H4" ("H4"); Footprint = "Hole 3.5"; UniqueID = "\NGBHQCQY" ("\NGBHQCQY")
+Change component parameters (AddParameter): Name = ""; Value = "H*"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Comments"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "CompType"; Value = "Hole"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Note"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Package"; Value = "Hole"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "PartNumber"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Pins"; Value = "1"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "SnapEDA_Link"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Tolerance_Percent"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Voltage"; Value = ""; VariantName = "[No Variations]"
+Added Member To Class: ClassName=DriverPCB Member=Component R18 100K
+Added Member To Class: ClassName=DriverPCB Member=Component R19 1K
+Added Member To Class: ClassName=DriverPCB Member=Component R31 100K
+Added Member To Class: ClassName=DriverPCB Member=Component R32 100K
+Added Member To Class: ClassName=DriverPCB Member=Component R34 10K
+Added Member To Class: ClassName=DriverPCB Member=Component R35 10K
+Added Member To Class: ClassName=DriverPCB Member=Component R36 10K
+Added Member To Class: ClassName=DriverPCB Member=Component R37 10K
+Added Member To Class: ClassName=DriverPCB Member=Component R39 10K
+Added Member To Class: ClassName=DriverPCB Member=Component R41 100K
+Added Member To Class: ClassName=DriverPCB Member=Component R42 100K
+Added Member To Class: ClassName=DriverPCB Member=Component R43 100K
+Added Member To Class: ClassName=DriverPCB Member=Component R44 100K

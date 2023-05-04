@@ -1,0 +1,60 @@
+Removed Pin From Net: NetName=NetC5_ch2_1 Pin=DG1-5
+Removed Pin From Net: NetName=NetC5_ch2_2 Pin=DG1-6
+Removed Pin From Net: NetName=NetC5_ch4_1 Pin=DG1-9
+Removed Pin From Net: NetName=NetC5_ch4_2 Pin=DG1-10
+Removed Pin From Net: NetName=NetC5_ch6_1 Pin=DG1-13
+Removed Pin From Net: NetName=NetC5_ch6_2 Pin=DG1-14
+Change component parameters: Designator = "H1" ("H1"); Footprint = "Hole 3.5"; UniqueID = "\EYIZALBG" ("\EYIZALBG")
+Change component parameters (AddParameter): Name = ""; Value = "H*"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Comments"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "CompType"; Value = "Hole"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Note"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Package"; Value = "Hole"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "PartNumber"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Pins"; Value = "1"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "SnapEDA_Link"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Tolerance_Percent"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Voltage"; Value = ""; VariantName = "[No Variations]"
+Change component parameters: Designator = "H2" ("H2"); Footprint = "Hole 3.5"; UniqueID = "\DUSKPDNJ" ("\DUSKPDNJ")
+Change component parameters (AddParameter): Name = ""; Value = "H*"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Comments"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "CompType"; Value = "Hole"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Note"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Package"; Value = "Hole"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "PartNumber"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Pins"; Value = "1"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "SnapEDA_Link"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Tolerance_Percent"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Voltage"; Value = ""; VariantName = "[No Variations]"
+Change component parameters: Designator = "H3" ("H3"); Footprint = "Hole 3.5"; UniqueID = "\KTXTCHRU" ("\KTXTCHRU")
+Change component parameters (AddParameter): Name = ""; Value = "H*"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Comments"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "CompType"; Value = "Hole"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Note"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Package"; Value = "Hole"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "PartNumber"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Pins"; Value = "1"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "SnapEDA_Link"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Tolerance_Percent"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Voltage"; Value = ""; VariantName = "[No Variations]"
+Change component parameters: Designator = "H4" ("H4"); Footprint = "Hole 3.5"; UniqueID = "\NGBHQCQY" ("\NGBHQCQY")
+Change component parameters (AddParameter): Name = ""; Value = "H*"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Comments"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "CompType"; Value = "Hole"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Note"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Package"; Value = "Hole"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "PartNumber"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Pins"; Value = "1"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "SnapEDA_Link"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Tolerance_Percent"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Voltage"; Value = ""; VariantName = "[No Variations]"
+Added Pin To Net: NetName=NetC5_ch2_2 Pin=DG1-5
+Added Pin To Net: NetName=NetC5_ch2_1 Pin=DG1-6
+Added Pin To Net: NetName=NetC5_ch4_2 Pin=DG1-9
+Added Pin To Net: NetName=NetC5_ch4_1 Pin=DG1-10
+Added Pin To Net: NetName=NetC5_ch6_2 Pin=DG1-13
+Added Pin To Net: NetName=NetC5_ch6_1 Pin=DG1-14
