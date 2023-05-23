@@ -1,0 +1,36 @@
+Added Component: Designator=T1(EPCS-B78476A8065A003-16)
+Add component (AddParameter): Name = "ComponentLink1Description"; Value = "Manufacturer URL"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink1URL"; Value = "http://www.epcos.com/"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2Description"; Value = "Datasheet"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2URL"; Value = "http://www.epcos.com/inf/30/ds/lan_mod/B78476A8065A003.pdf"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink3Description"; Value = "Package Specification"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink3URL"; Value = "http://www.epcos.com/inf/30/ds/lan_mod/B78476A8065A003.pdf"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "DatasheetVersion"; Value = "08/2012"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Inductance L"; Value = "350 uH min."; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Insertion loss"; Value = "-1.0 dB max."; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer"; Value = "EPCOS"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Mounting Technology"; Value = "Surface Mount"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Operating Temperature Range"; Value = "0 to 70 degC"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "PackageDescription"; Value = "16-Pin Surface Mount Device, Body 12.7 x 7.11 mm, Pitch 1.27 mm"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "PackageReference"; Value = "B78476A8065A003-16"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "PackageVersion"; Value = "08/2012"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Packing"; Value = "Tape and Reel"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "PartNumber"; Value = "B78476A8065A003"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Ports"; Value = "1"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "RoHS"; Value = "TRUE"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Turns Ratio"; Value = "1CT +/- 3%"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Voltage Test"; Value = "1500 V AC"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Weight"; Value = "0.8 g"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=P1_TX_P Pin=T1-1
+Added Pin To Net: NetName=+3.3v Pin=T1-2
+Added Pin To Net: NetName=P1_TX_N Pin=T1-3
+Added Pin To Net: NetName=P1_RX_P Pin=T1-6
+Added Pin To Net: NetName=+3.3v Pin=T1-7
+Added Pin To Net: NetName=P1_RX_N Pin=T1-8
+Added Pin To Net: NetName=NetJ_6 Pin=T1-9
+Added Pin To Net: NetName=NetR14_2 Pin=T1-10
+Added Pin To Net: NetName=NetJ_3 Pin=T1-11
+Added Pin To Net: NetName=NetJ_2 Pin=T1-14
+Added Pin To Net: NetName=NetR15_2 Pin=T1-15
+Added Pin To Net: NetName=NetJ_1 Pin=T1-16
+Added Member To Class: ClassName=ControlPCB Member=Component T1 B78476A8065A003

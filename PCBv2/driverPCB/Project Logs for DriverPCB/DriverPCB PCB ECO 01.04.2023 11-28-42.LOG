@@ -1,0 +1,173 @@
+Removed Pin From Net: NetName=M1_SWDIO Pin=U?-19
+Removed Pin From Net: NetName=M1_SWCLK Pin=U?-20
+Change Component Designator: OldDesignator=C? NewDesignator=C13
+Change Component Designator: OldDesignator=C? NewDesignator=C14
+Change Component Designator: OldDesignator=C? NewDesignator=C15
+Change Component Designator: OldDesignator=C? NewDesignator=C16
+Change Component Designator: OldDesignator=C? NewDesignator=C17
+Change Component Designator: OldDesignator=R? NewDesignator=R25
+Change Component Designator: OldDesignator=R? NewDesignator=R26
+Change Component Designator: OldDesignator=R? NewDesignator=R27
+Change Component Designator: OldDesignator=R? NewDesignator=R28
+Change Component Designator: OldDesignator=R? NewDesignator=R29
+Change Component Designator: OldDesignator=R? NewDesignator=R30
+Change Component Designator: OldDesignator=R? NewDesignator=R31
+Change Component Designator: OldDesignator=R? NewDesignator=R32
+Change Component Designator: OldDesignator=R? NewDesignator=R33
+Change Component Designator: OldDesignator=R? NewDesignator=R34
+Change Component Designator: OldDesignator=R? NewDesignator=R35
+Change Component Designator: OldDesignator=R? NewDesignator=R36
+Change Component Designator: OldDesignator=R? NewDesignator=R37
+Change Component Designator: OldDesignator=R? NewDesignator=R38
+Change Component Designator: OldDesignator=R? NewDesignator=R39
+Change Component Designator: OldDesignator=R? NewDesignator=R40
+Change Component Designator: OldDesignator=R? NewDesignator=R41
+Change Component Designator: OldDesignator=R? NewDesignator=R42
+Change Component Designator: OldDesignator=S? NewDesignator=S2
+Change Component Designator: OldDesignator=U? NewDesignator=U4
+Change Component Designator: OldDesignator=X? NewDesignator=X1
+Change Component Designator: OldDesignator=X? NewDesignator=X2
+Change component parameters: Designator = "H1" ("H1"); Footprint = "Hole 3.5"; UniqueID = "\EYIZALBG" ("\EYIZALBG")
+Change component parameters (AddParameter): Name = ""; Value = "H*"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Comments"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "CompType"; Value = "Hole"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Note"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Package"; Value = "Hole"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "PartNumber"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Pins"; Value = "1"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "SnapEDA_Link"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Tolerance_Percent"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Voltage"; Value = ""; VariantName = "[No Variations]"
+Change component parameters: Designator = "H2" ("H2"); Footprint = "Hole 3.5"; UniqueID = "\DUSKPDNJ" ("\DUSKPDNJ")
+Change component parameters (AddParameter): Name = ""; Value = "H*"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Comments"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "CompType"; Value = "Hole"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Note"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Package"; Value = "Hole"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "PartNumber"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Pins"; Value = "1"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "SnapEDA_Link"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Tolerance_Percent"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Voltage"; Value = ""; VariantName = "[No Variations]"
+Change component parameters: Designator = "H3" ("H3"); Footprint = "Hole 3.5"; UniqueID = "\KTXTCHRU" ("\KTXTCHRU")
+Change component parameters (AddParameter): Name = ""; Value = "H*"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Comments"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "CompType"; Value = "Hole"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Note"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Package"; Value = "Hole"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "PartNumber"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Pins"; Value = "1"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "SnapEDA_Link"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Tolerance_Percent"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Voltage"; Value = ""; VariantName = "[No Variations]"
+Change component parameters: Designator = "H4" ("H4"); Footprint = "Hole 3.5"; UniqueID = "\NGBHQCQY" ("\NGBHQCQY")
+Change component parameters (AddParameter): Name = ""; Value = "H*"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Comments"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "CompType"; Value = "Hole"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Note"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Package"; Value = "Hole"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "PartNumber"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Pins"; Value = "1"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "SnapEDA_Link"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Tolerance_Percent"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Voltage"; Value = ""; VariantName = "[No Variations]"
+Added Component: Designator=R43(Resistor 0402)
+Add component (AddParameter): Name = "Package"; Value = "0402"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = "3K"; VariantName = "[No Variations]"
+Added Component: Designator=R44(Resistor 0402)
+Add component (AddParameter): Name = "Package"; Value = "0402"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = "3K"; VariantName = "[No Variations]"
+Added Component: Designator=VD2(0805-)
+Add component (AddParameter): Name = "CompType"; Value = "LED"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Note"; Value = "Read"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package"; Value = "0805"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "PartNumber"; Value = ""; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Pins"; Value = "2"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "SnapEDA_Link"; Value = ""; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Tolerance_Percent"; Value = ""; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = "0805"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Voltage"; Value = ""; VariantName = "[No Variations]"
+Added Component: Designator=VD3(0805-)
+Add component (AddParameter): Name = "CompType"; Value = "LED"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Note"; Value = "Read"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package"; Value = "0805"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "PartNumber"; Value = ""; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Pins"; Value = "2"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "SnapEDA_Link"; Value = ""; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Tolerance_Percent"; Value = ""; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = "0805"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Voltage"; Value = ""; VariantName = "[No Variations]"
+Added Pin To Net: NetName=+24v Pin=C3_U_chanel6-1
+Added Pin To Net: NetName=+24v Pin=C4_U_chanel6-1
+Added Pin To Net: NetName=+24v Pin=C5_U_chanel6-2
+Added Pin To Net: NetName=+24v Pin=C7_U_chanel6-2
+Added Pin To Net: NetName=+24v Pin=D1_U_chanel6-C
+Added Pin To Net: NetName=+24v Pin=R2_U_chanel6-2
+Added Pin To Net: NetName=M1_A3_LED Pin=R43-1
+Added Pin To Net: NetName=M2_A3_LED Pin=R44-1
+Added Pin To Net: NetName=+24v Pin=U1_U_chanel6-12
+Added Pin To Net: NetName=+24v Pin=U1_U_chanel6-13
+Added Pin To Net: NetName=+24v Pin=U1_U_chanel6-14
+Added Pin To Net: NetName=M2_SWDIO Pin=U4-19
+Added Pin To Net: NetName=M2_SWCLK Pin=U4-20
+Added Pin To Net: NetName=GND Pin=VD2-K
+Added Pin To Net: NetName=GND Pin=VD3-K
+Change Net Name : Old Net Name=NetR?_1 New Net Name=NetR34_1
+Change Net Name : Old Net Name=NetR?_2 New Net Name=NetR27_2
+Added Pin To Net: NetName=NetR25_2 Pin=R25-2
+Added Pin To Net: NetName=NetR25_2 Pin=S1-8
+Added Net: Name=NetR25_2
+Added Pin To Net: NetName=NetR26_2 Pin=R26-2
+Added Pin To Net: NetName=NetR26_2 Pin=S1-7
+Added Net: Name=NetR26_2
+Added Pin To Net: NetName=NetR28_2 Pin=R28-2
+Added Pin To Net: NetName=NetR28_2 Pin=S1-5
+Added Net: Name=NetR28_2
+Added Pin To Net: NetName=NetR35_2 Pin=R35-2
+Added Pin To Net: NetName=NetR35_2 Pin=S2-8
+Added Net: Name=NetR35_2
+Added Pin To Net: NetName=NetR36_2 Pin=R36-2
+Added Pin To Net: NetName=NetR36_2 Pin=S2-7
+Added Net: Name=NetR36_2
+Added Pin To Net: NetName=NetR37_2 Pin=R37-2
+Added Pin To Net: NetName=NetR37_2 Pin=S2-6
+Added Net: Name=NetR37_2
+Added Pin To Net: NetName=NetR38_2 Pin=R38-2
+Added Pin To Net: NetName=NetR38_2 Pin=S2-5
+Added Net: Name=NetR38_2
+Added Pin To Net: NetName=NetR43_2 Pin=R43-2
+Added Pin To Net: NetName=NetR43_2 Pin=VD2-A
+Added Net: Name=NetR43_2
+Added Pin To Net: NetName=NetR44_2 Pin=R44-2
+Added Pin To Net: NetName=NetR44_2 Pin=VD3-A
+Added Net: Name=NetR44_2
+Added Member To Class: ClassName=DriverPCB Member=Component C13 0.1 uF
+Added Member To Class: ClassName=DriverPCB Member=Component C14 0.1 uF
+Added Member To Class: ClassName=DriverPCB Member=Component C15 0.1 uF
+Added Member To Class: ClassName=DriverPCB Member=Component C16 0.1 uF
+Added Member To Class: ClassName=DriverPCB Member=Component R25 10K
+Added Member To Class: ClassName=DriverPCB Member=Component R26 10K
+Added Member To Class: ClassName=DriverPCB Member=Component R27 10K
+Added Member To Class: ClassName=DriverPCB Member=Component R29 100K
+Added Member To Class: ClassName=DriverPCB Member=Component R30 100K
+Added Member To Class: ClassName=DriverPCB Member=Component R31 100K
+Added Member To Class: ClassName=DriverPCB Member=Component R32 100K
+Added Member To Class: ClassName=DriverPCB Member=Component R33 10K
+Added Member To Class: ClassName=DriverPCB Member=Component R34 10K
+Added Member To Class: ClassName=DriverPCB Member=Component R35 10K
+Added Member To Class: ClassName=DriverPCB Member=Component R36 10K
+Added Member To Class: ClassName=DriverPCB Member=Component R37 10K
+Added Member To Class: ClassName=DriverPCB Member=Component R38 10K
+Added Member To Class: ClassName=DriverPCB Member=Component R39 100K
+Added Member To Class: ClassName=DriverPCB Member=Component R40 100K
+Added Member To Class: ClassName=DriverPCB Member=Component R41 100K
+Added Member To Class: ClassName=DriverPCB Member=Component R42 100K
+Added Member To Class: ClassName=DriverPCB Member=Component R43 3K
+Added Member To Class: ClassName=DriverPCB Member=Component R44 3K
+Added Member To Class: ClassName=DriverPCB Member=Component VD2
+Added Member To Class: ClassName=DriverPCB Member=Component VD3
+Added Member To Class: ClassName=DriverPCB Member=Component X1

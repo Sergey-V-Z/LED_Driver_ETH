@@ -36,39 +36,55 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-typedef enum {
-	Optic,
-	Ultrasound,
-	NoInit,
-}SensorType;
 
+typedef enum {
+	LED_DRV,
+	RELE,
+	NoInit,
+}PCBType;
+/*
 typedef struct
 {
 	uint32_t callTimeMin; 				//  = 0xFFFFFFFF минимальное время прохождения ребра измеренное при каллибровке
 	uint32_t callTimeMax;  				//  = 0 максимальное время прохождения ребра измеренное при каллибровке
 	uint32_t timOutFalling; 			// = 10
 }callTime_t;
+*/
+typedef struct
+{
+
+	uint32_t 	PWM;			// шим на каннале
+	uint32_t 	Current;		// ток в канале
+	uint8_t 	IsOn;			// включился ? проверки идет по наличию тока
+	uint8_t 	On_off;			// включение или выключение канаала
+	uint8_t		Channel_number;	// номер канала
+
+}led_stat_t;
 
 typedef struct
 {
-	uint32_t offsetTime;
-	uint16_t callDistanceMin;			//  = 0 зона работы датчика
-	uint16_t callDistanceMax;			//  = 4096 зона работы датчика
-	callTime_t timeParametrs[4];		// массив с разными каллибровками времени для разных скоростей
-	uint16_t chanelCallTime;			//  = 0 текущий канал каллибровки
-	uint16_t triger;					//  = 100 смещение от ленты
-	uint32_t timeCall;					//  = 5000 время выполнение калибровки
-	uint16_t modePwr;					// режим работы питания
-	float k_H;							// = 0.1 коэфицент фильтра для быстрых изменений ( начальное 0.9)
-	float k_L;							// = 0.03 коэфицент фильтра для медленных изменений
-	SensorType sensorType;				// = NoInit
-}sensorSett_t;
+
+	led_stat_t led_Sett[3];
+	uint8_t 	I2C_addr;		// адрес I2C  на котором рассположен канналы
+	PCBType 	TypePCB;		// тип платы считывается с самой платы (группы)
+
+}group_stat_t;
 
 typedef struct
 {
+	group_stat_t group_Sett[10];
 	uint8_t	MAC_end;
-	sensorSett_t sensorSett[2];
+	uint8_t isON_from_settings;
+	uint8_t MAC_end_from_settings;
+	uint8_t version;
+
 }settings_t;
+
+typedef struct
+{
+	uint8_t 	CountAddresI2C;
+	uint16_t 	I2C_addr[128];		// адрес I2C  на котором рассположен каннал
+}I2C_Map_t;
 
 /* USER CODE END ET */
 
@@ -79,7 +95,7 @@ typedef struct
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
-#define ID_STRING " GP2Y_v3.1_eth_09.01.23"
+#define ID_STRING " Controll LED ETH ver1 05.05.23"
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/

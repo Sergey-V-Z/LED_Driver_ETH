@@ -19,8 +19,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
-#include "adc.h"
-#include "dma.h"
 #include "i2c.h"
 #include "lwip.h"
 #include "spi.h"
@@ -51,7 +49,6 @@
 
 /* USER CODE BEGIN PV */
 settings_t settings = {0, 0x0E};
-SensorType sensorType = NoInit;
 
 uint32_t count_tic = 0; //для замеров времени выполнения кода
 
@@ -67,6 +64,9 @@ pins_spi_t ChipSelect = {SPI3_CS_GPIO_Port, SPI3_CS_Pin};
 pins_spi_t WriteProtect = {WP_GPIO_Port, WP_Pin};
 pins_spi_t Hold = {HOLD_GPIO_Port, HOLD_Pin};
 flash mem_spi;
+
+//for i2c
+I2C_Map_t I2C_Map;
 
 /* USER CODE END PV */
 
@@ -110,12 +110,58 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DMA_Init();
-  MX_ADC1_Init();
-  MX_ADC2_Init();
   MX_SPI3_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
+
+	// read jumpers
+	uint8_t endMAC;
+	//Bit0
+	if (HAL_GPIO_ReadPin(MAC_b0_GPIO_Port, MAC_b0_Pin)) SET_BIT(endMAC,0);
+	else CLEAR_BIT(endMAC,0);
+	//Bit1
+	if (HAL_GPIO_ReadPin(MAC_b1_GPIO_Port, MAC_b1_Pin)) SET_BIT(endMAC,1);
+	else CLEAR_BIT(endMAC,1);
+	//Bit2
+	if (HAL_GPIO_ReadPin(MAC_b2_GPIO_Port, MAC_b2_Pin)) SET_BIT(endMAC,2);
+	else CLEAR_BIT(endMAC,2);
+	//Bit3
+	if (HAL_GPIO_ReadPin(MAC_b3_GPIO_Port, MAC_b3_Pin)) SET_BIT(endMAC,3);
+	else CLEAR_BIT(endMAC,3);
+	//Bit4
+	if (HAL_GPIO_ReadPin(MAC_b4_GPIO_Port, MAC_b4_Pin)) SET_BIT(endMAC,4);
+	else CLEAR_BIT(endMAC,4);
+	//Bit5
+	if (HAL_GPIO_ReadPin(MAC_b5_GPIO_Port, MAC_b5_Pin)) SET_BIT(endMAC,5);
+	else CLEAR_BIT(endMAC,5);
+	//Bit6
+	if (HAL_GPIO_ReadPin(MAC_b6_GPIO_Port, MAC_b6_Pin)) SET_BIT(endMAC,6);
+	else CLEAR_BIT(endMAC,6);
+	//Bit7
+	if (HAL_GPIO_ReadPin(MAC_b7_GPIO_Port, MAC_b7_Pin)) SET_BIT(endMAC,7);
+	else CLEAR_BIT(endMAC,7);
+
+
+	// Сбросим карту адрессов
+	I2C_Map.CountAddresI2C = 0;
+	for (int var = 0; var < 128; ++var) {
+		I2C_Map.I2C_addr[var] = 0;
+	}
+
+	// Сканируем I2C и заносим в карту
+	for(int i=1; i<128; i++)
+	{
+		int ret = HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t)(i<<1), 3, 5);
+		if (ret != HAL_OK) /* No ACK Received At That Address */
+		{  }
+		else if(ret == HAL_OK)
+		{
+			I2C_Map.I2C_addr[I2C_Map.CountAddresI2C] = (uint16_t)(i<<1);
+			I2C_Map.CountAddresI2C ++;
+		}
+	}
+
+	// работаем снастройками из флешки
 	HAL_GPIO_WritePin(eth_NRST_GPIO_Port, eth_NRST_Pin, GPIO_PIN_SET);
 
 	HAL_GPIO_WritePin(HOLD_GPIO_Port, HOLD_Pin, GPIO_PIN_SET);
@@ -128,64 +174,53 @@ int main(void)
 	if ((settings.MAC_end == 0) | (settings.MAC_end == 0xFFFFFFFF) | resetSettings)
 	{
 		mem_spi.W25qxx_EraseSector(0);
-		uint32_t s = 1;
-		// for sensor 1
-		settings.sensorSett[s].callDistanceMax = 4096;
-		settings.sensorSett[s].callDistanceMin = 0;
+		settings.isON_from_settings = false;
+		settings.MAC_end = endMAC;
+		settings.MAC_end_from_settings = 1;
+		settings.version = 10;
 
-		settings.sensorSett[s].timeParametrs[1].callTimeMax = 0xFFFFFFFF;
-		settings.sensorSett[s].timeParametrs[1].callTimeMin = 0;
-		settings.sensorSett[s].timeParametrs[1].timOutFalling = 10;
+		// Записываем канналы
+		for (int ch = 0; ch < I2C_Map.CountAddresI2C; ++ch) {
+			settings.group_Sett[ch].I2C_addr = I2C_Map.I2C_addr[ch];
+			settings.group_Sett[ch].led_Sett[0].Channel_number = ch;
+			settings.group_Sett[ch].led_Sett[1].Channel_number = ch + 1;
+			settings.group_Sett[ch].led_Sett[2].Channel_number = ch + 2;
 
-		settings.sensorSett[s].timeParametrs[2].callTimeMax = 0xFFFFFFFF;
-		settings.sensorSett[s].timeParametrs[2].callTimeMin = 0;
-		settings.sensorSett[s].timeParametrs[2].timOutFalling = 10;
+			settings.group_Sett[ch].led_Sett[0].Current = 0;
+			settings.group_Sett[ch].led_Sett[1].Current = 0;
+			settings.group_Sett[ch].led_Sett[2].Current = 0;
 
-		settings.sensorSett[s].timeParametrs[3].callTimeMax = 0xFFFFFFFF;
-		settings.sensorSett[s].timeParametrs[3].callTimeMin = 0;
-		settings.sensorSett[s].timeParametrs[3].timOutFalling = 10;
+			settings.group_Sett[ch].led_Sett[0].On_off = 0;
+			settings.group_Sett[ch].led_Sett[1].On_off = 0;
+			settings.group_Sett[ch].led_Sett[2].On_off = 0;
 
-		settings.sensorSett[s].chanelCallTime = 1;
-		settings.sensorSett[s].k_H = 0.1;
-		settings.sensorSett[s].k_L = 0.03;
-		settings.sensorSett[s].modePwr = 2;
-		settings.sensorSett[s].offsetTime = 0;
-		settings.sensorSett[s].sensorType = Optic;
-		settings.sensorSett[s].timeCall = 5000;
-		settings.sensorSett[s].triger = 100;
+			settings.group_Sett[ch].led_Sett[0].PWM = 0;
+			settings.group_Sett[ch].led_Sett[1].PWM = 0;
+			settings.group_Sett[ch].led_Sett[2].PWM = 0;
 
-		// for sensor 1
-		s = 2;
-		settings.sensorSett[s].callDistanceMax = 4096;
-		settings.sensorSett[s].callDistanceMin = 0;
-
-		settings.sensorSett[s].timeParametrs[1].callTimeMax = 0xFFFFFFFF;
-		settings.sensorSett[s].timeParametrs[1].callTimeMin = 0;
-		settings.sensorSett[s].timeParametrs[1].timOutFalling = 10;
-
-		settings.sensorSett[s].timeParametrs[2].callTimeMax = 0xFFFFFFFF;
-		settings.sensorSett[s].timeParametrs[2].callTimeMin = 0;
-		settings.sensorSett[s].timeParametrs[2].timOutFalling = 10;
-
-		settings.sensorSett[s].timeParametrs[3].callTimeMax = 0xFFFFFFFF;
-		settings.sensorSett[s].timeParametrs[3].callTimeMin = 0;
-		settings.sensorSett[s].timeParametrs[3].timOutFalling = 10;
-
-		settings.sensorSett[s].chanelCallTime = 1;
-		settings.sensorSett[s].k_H = 0.1;
-		settings.sensorSett[s].k_L = 0.03;
-		settings.sensorSett[s].modePwr = 2;
-		settings.sensorSett[s].offsetTime = 0;
-		settings.sensorSett[s].sensorType = Optic;
-		settings.sensorSett[s].timeCall = 5000;
-		settings.sensorSett[s].triger = 100;
-
-		settings.MAC_end = 0x05;
+			settings.group_Sett[ch].led_Sett[0].IsOn = 0;
+			settings.group_Sett[ch].led_Sett[1].IsOn = 0;
+			settings.group_Sett[ch].led_Sett[2].IsOn = 0;
+		}
 
 		mem_spi.Write(settings);
 
 		mem_spi.Read(&settings);
 	}
+
+	// настройка первоночального состояния канналов
+	if (settings.isON_from_settings) { // если состояние нужно взять из настроек
+		// ничего не делаем состояния уже загруженны
+	} else {
+
+		//иначе выключаем все канналы
+		for (int ch = 0; ch < I2C_Map.CountAddresI2C; ++ch) {
+			settings.group_Sett[ch].led_Sett[0].On_off = 0;
+			settings.group_Sett[ch].led_Sett[1].On_off = 0;
+			settings.group_Sett[ch].led_Sett[2].On_off = 0;
+		}
+	}
+
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */
@@ -271,12 +306,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
-	if (htim->Instance == TIM4) {
-		Sensor2._acknowledgeTimerUpdate();
-	}
-	if (htim->Instance == TIM3) {
-		Sensor1._acknowledgeTimerUpdate();
-	}
+
   /* USER CODE END Callback 1 */
 }
 

@@ -1,0 +1,7 @@
+Change Component Footprint: Designator=T1 Old Footprint=EPCS-B78476A8065A003-16 New Footprint=EPCS-B78476A8065A003-16
+Change Net Name : Old Net Name=NetJ_1 New Net Name=TR_TX_P
+Change Net Name : Old Net Name=NetJ_3 New Net Name=TR_RX_P
+Change Net Name : Old Net Name=NetJ_6 New Net Name=TR_RX_N
+Change Net Name : Old Net Name=NetR15_2 New Net Name=TR_TX_N
+Added Differential Pair: Name=TR_RX
+Added Differential Pair: Name=TR_TX

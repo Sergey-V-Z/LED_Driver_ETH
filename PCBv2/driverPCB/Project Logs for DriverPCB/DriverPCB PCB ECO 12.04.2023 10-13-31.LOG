@@ -1,0 +1,12 @@
+Removed Pin From Net: NetName=+5v Pin=X3-1
+Removed Pin From Net: NetName=+5v Pin=X3-2
+Removed Pin From Net: NetName=I2C_DATA Pin=X3-5
+Removed Pin From Net: NetName=I2C_CLK Pin=X3-6
+Removed Pin From Net: NetName=+24v Pin=X3-9
+Removed Pin From Net: NetName=+24v Pin=X3-10
+Added Pin To Net: NetName=+24v Pin=X3-1
+Added Pin To Net: NetName=+24v Pin=X3-2
+Added Pin To Net: NetName=I2C_CLK Pin=X3-5
+Added Pin To Net: NetName=I2C_DATA Pin=X3-6
+Added Pin To Net: NetName=+5v Pin=X3-9
+Added Pin To Net: NetName=+5v Pin=X3-10
