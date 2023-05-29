@@ -142,24 +142,7 @@ int main(void)
 	else CLEAR_BIT(endMAC,7);
 
 
-	// Сбросим карту адрессов
-	I2C_Map.CountAddresI2C = 0;
-	for (int var = 0; var < 128; ++var) {
-		I2C_Map.I2C_addr[var] = 0;
-	}
 
-	// Сканируем I2C и заносим в карту
-	for(int i=1; i<128; i++)
-	{
-		int ret = HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t)(i<<1), 3, 5);
-		if (ret != HAL_OK) /* No ACK Received At That Address */
-		{  }
-		else if(ret == HAL_OK)
-		{
-			I2C_Map.I2C_addr[I2C_Map.CountAddresI2C] = (uint16_t)(i<<1);
-			I2C_Map.CountAddresI2C ++;
-		}
-	}
 
 	// работаем снастройками из флешки
 	HAL_GPIO_WritePin(eth_NRST_GPIO_Port, eth_NRST_Pin, GPIO_PIN_SET);

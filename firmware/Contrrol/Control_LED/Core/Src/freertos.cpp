@@ -83,6 +83,7 @@ extern led LED_IPadr;
 extern led LED_error;
 extern led LED_OSstart;
 
+extern I2C_Map_t I2C_Map;
 //структуры для netcon
 extern struct netif gnetif;
 
@@ -92,8 +93,13 @@ string in_str;
 
 //переменные для обшей работы
 uint32_t Start = 0;
-
+extern I2C_HandleTypeDef hi2c1;
 extern flash mem_spi;
+
+//переменные для тестов
+uint8_t testI2C_buff[20];
+uint8_t testI2C_RX_buff[20];
+uint8_t txRedy = 1;
 
 /* USER CODE END Variables */
 osThreadId MainTaskHandle;
@@ -119,7 +125,7 @@ extern void MX_LWIP_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /* GetIdleTaskMemory prototype (linked to static allocation support) */
-void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer, StackType_t **ppxIdleTaskStackBuffer, uint32_t *pulIdleTaskStackSize );
+extern "C" void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer, StackType_t **ppxIdleTaskStackBuffer, uint32_t *pulIdleTaskStackSize );
 
 /* USER CODE BEGIN GET_IDLE_TASK_MEMORY */
 static StaticTask_t xIdleTaskTCBBuffer;
@@ -216,11 +222,48 @@ void mainTask(void const * argument)
   /* init code for LWIP */
   MX_LWIP_Init();
   /* USER CODE BEGIN mainTask */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
+	testI2C_buff[0] = 1;
+	testI2C_buff[1] = 2;
+	testI2C_buff[2] = 3;
+	testI2C_buff[3] = 4;
+	testI2C_buff[20] = 5;
+
+	HAL_StatusTypeDef status1;
+
+	// Сбросим карту адрессов
+	I2C_Map.CountAddresI2C = 0;
+	for (int var = 0; var < 128; ++var) {
+		I2C_Map.I2C_addr[var] = 0;
+	}
+
+
+	// Сканируем I2C и заносим в карту
+	for(int i=50; i<70; i++)
+	{
+		int ret = HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t)(i<<1), 1, 5);
+		if (ret != HAL_OK) // No ACK Received At That Address
+		{  }
+		else if(ret == HAL_OK)
+		{
+			I2C_Map.I2C_addr[I2C_Map.CountAddresI2C] = (uint16_t)(i<<1);
+			I2C_Map.CountAddresI2C ++;
+		}
+	}
+
+	/* Infinite loop */
+	for(;;)
+	{
+
+		//status1 = HAL_I2C_IsDeviceReady(&hi2c1, 0x40 << 1, 3, 100);
+		if(1){
+			txRedy = 0;
+			status1 = HAL_I2C_Master_Transmit(&hi2c1, (uint16_t)0x40 << 1, testI2C_buff, 4, 100);
+			osDelay(5);
+			status1 = HAL_I2C_Master_Receive(&hi2c1, (uint16_t)0x40 << 1, testI2C_RX_buff, 4, 100);
+		}
+
+		osDelay(1000);
+	}
   /* USER CODE END mainTask */
 }
 
@@ -546,4 +589,15 @@ void HAL_TIM_IC_CaptureCallback (TIM_HandleTypeDef *htim)
 	}
 }
 
+
+void HAL_I2C_MasterTxCpltCallback (I2C_HandleTypeDef * hi2c)
+{
+	txRedy = 1;
+	// TX Done .. Do Something!
+}
+
+void HAL_I2C_MasterRxCpltCallback (I2C_HandleTypeDef * hi2c)
+{
+	// RX Done .. Do Something!
+}
 /* USER CODE END Application */

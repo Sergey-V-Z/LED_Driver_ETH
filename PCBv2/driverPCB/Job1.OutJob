@@ -196,7 +196,7 @@ ShowComponentParameters2=1
 GlobalBookmarks2=0
 PDFACompliance2=Disabled
 PDFVersion2=Default
-OutputFilePath3=D:\Radio\Jobe\LED_Driver_ETH\PCB\driverPCB\Project Outputs for DriverPCB\
+OutputFilePath3=D:\Radio\Jobe\LED_Driver_ETH\PCBv2\driverPCB\Project Outputs for DriverPCB\
 ReleaseManaged3=1
 OutputBasePath3=Project Outputs for DriverPCB
 OutputPathMedia3=
@@ -250,7 +250,7 @@ WmvQuality4=80
 [GeneratedFilesSettings]
 RelativeOutputPath2=
 OpenOutputs2=1
-RelativeOutputPath3=D:\Radio\Jobe\LED_Driver_ETH\PCB\driverPCB\Project Outputs for DriverPCB\
+RelativeOutputPath3=D:\Radio\Jobe\LED_Driver_ETH\PCBv2\driverPCB\Project Outputs for DriverPCB\
 OpenOutputs3=1
 AddToProject3=1
 TimestampFolder3=0

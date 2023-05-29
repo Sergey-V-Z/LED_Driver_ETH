@@ -203,14 +203,10 @@ DocumentPath=Project Outputs for ControlPCB\Gerber\ControlPCB.RUL
 DItemRevisionGUID=
 
 [GeneratedDocument21]
-DocumentPath=Project Outputs for ControlPCB\Design Rule Check - ControlPCB.html
-DItemRevisionGUID=
-
-[GeneratedDocument22]
 DocumentPath=Project Outputs for ControlPCB\Pick Place\Pick Place for ControlPCB.csv
 DItemRevisionGUID=
 
-[GeneratedDocument23]
+[GeneratedDocument22]
 DocumentPath=Project Outputs for ControlPCB\Pick Place\Pick Place for ControlPCB.txt
 DItemRevisionGUID=
 
