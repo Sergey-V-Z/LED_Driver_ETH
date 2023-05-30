@@ -21,7 +21,7 @@
 #include "i2c.h"
 
 /* USER CODE BEGIN 0 */
-
+extern uint32_t OwnAddr;
 /* USER CODE END 0 */
 
 I2C_HandleTypeDef hi2c1;
@@ -35,7 +35,7 @@ void MX_I2C1_Init(void)
   /* USER CODE END I2C1_Init 0 */
 
   /* USER CODE BEGIN I2C1_Init 1 */
-
+	//hi2c1.Init.OwnAddress1 = OwnAddr;
   /* USER CODE END I2C1_Init 1 */
   hi2c1.Instance = I2C1;
   hi2c1.Init.Timing = 0x00201C2B;

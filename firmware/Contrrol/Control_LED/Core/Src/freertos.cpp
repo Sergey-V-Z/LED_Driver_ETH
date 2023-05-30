@@ -230,6 +230,7 @@ void mainTask(void const * argument)
 
 	HAL_StatusTypeDef status1;
 
+	/*
 	// Сбросим карту адрессов
 	I2C_Map.CountAddresI2C = 0;
 	for (int var = 0; var < 128; ++var) {
@@ -249,7 +250,7 @@ void mainTask(void const * argument)
 			I2C_Map.CountAddresI2C ++;
 		}
 	}
-
+*/
 	/* Infinite loop */
 	for(;;)
 	{

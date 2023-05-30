@@ -64,18 +64,24 @@ extern "C" {
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-
+void IN_GPIO_Init(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define LED1_Pin LL_GPIO_PIN_0
-#define LED1_GPIO_Port GPIOF
+#define A3_LED_Pin LL_GPIO_PIN_0
+#define A3_LED_GPIO_Port GPIOF
 #define EN3_Pin LL_GPIO_PIN_1
 #define EN3_GPIO_Port GPIOF
 #define EN2_Pin LL_GPIO_PIN_4
 #define EN2_GPIO_Port GPIOA
 #define EN1_Pin LL_GPIO_PIN_5
 #define EN1_GPIO_Port GPIOA
+#define A2_PWM_CH1_Pin LL_GPIO_PIN_6
+#define A2_PWM_CH1_GPIO_Port GPIOA
+#define A1_PWM_CH2_Pin LL_GPIO_PIN_7
+#define A1_PWM_CH2_GPIO_Port GPIOA
+#define A0_PWM_CH4_Pin LL_GPIO_PIN_1
+#define A0_PWM_CH4_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 
