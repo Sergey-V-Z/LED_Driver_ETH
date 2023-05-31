@@ -37,21 +37,21 @@
 /* USER CODE BEGIN PTD */
 __IO uint32_t     Transfer_Direction = 0;
 __IO uint32_t     Xfer_Complete = 0;
-
+#define ln_ch 5 //chanels for adc
 
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 extern ADC_HandleTypeDef hadc;
-
+extern TIM_HandleTypeDef htim3;
 /* Buffer used for transmission */
-uint8_t aTxBuffer[21];
+uint8_t aTxBuffer[21] = {0};
 
 /* Buffer used for reception */
-uint8_t aRxBuffer[15];
+uint8_t aRxBuffer[15] = {0};
 
-uint16_t adc_buffer[4] = {0};
+uint16_t adc_buffer[ln_ch*2] = {0};
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -63,9 +63,10 @@ uint16_t adc_buffer[4] = {0};
 
 /* USER CODE BEGIN PV */
 uint8_t rxEnd = 1;
-uint32_t OwnAddr = 0;
+volatile uint32_t OwnAddr = 0;
 uint8_t en1 = 0, en2 = 0, en3 = 0;
 uint8_t adc_Flag = 0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -86,24 +87,6 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	IN_GPIO_Init();
-
-	//Bit0
-	if (LL_GPIO_IsInputPinSet(A0_PWM_CH4_GPIO_Port, A0_PWM_CH4_Pin)) SET_BIT(OwnAddr,0);
-	else CLEAR_BIT(OwnAddr,0);
-	//Bit1
-	if (LL_GPIO_IsInputPinSet(A1_PWM_CH2_GPIO_Port, A1_PWM_CH2_Pin)) SET_BIT(OwnAddr,1);
-	else CLEAR_BIT(OwnAddr,1);
-	//Bit2
-	if (LL_GPIO_IsInputPinSet(A2_PWM_CH1_GPIO_Port, A2_PWM_CH1_Pin)) SET_BIT(OwnAddr,2);
-	else CLEAR_BIT(OwnAddr,2);
-	//Bit3
-	if (LL_GPIO_IsInputPinSet(A3_LED_GPIO_Port, A3_LED_Pin)) SET_BIT(OwnAddr,3);
-	else CLEAR_BIT(OwnAddr,3);
-
-	LL_GPIO_DeInit(A0_PWM_CH4_GPIO_Port);
-	LL_GPIO_DeInit(A1_PWM_CH2_GPIO_Port);
-	LL_GPIO_DeInit(A3_LED_GPIO_Port);
 
   /* USER CODE END 1 */
 
@@ -113,28 +96,35 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-	aRxBuffer[0]=0x00;
-	aRxBuffer[1]=0x00;
-	aRxBuffer[2]=0x00;
-	aRxBuffer[3]=0x00;
-	aRxBuffer[4]=0x00;
-	aRxBuffer[5]=0x00;
 
-	aTxBuffer[0]=0x00;
-	aTxBuffer[1]=0x00;
-	aTxBuffer[2]=0x00;
-	aTxBuffer[3]=0x00;
-	aTxBuffer[4]=0x00;
-	aTxBuffer[5]=0x00;
-	aTxBuffer[6]=0x00;
-	aTxBuffer[7]=0x00;
-	aTxBuffer[8]=0x00;
   /* USER CODE END Init */
 
   /* Configure the system clock */
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
+
+	IN_GPIO_Init();
+
+	//Bit0
+	if (LL_GPIO_IsInputPinSet(A0_PWM_CH4_GPIO_Port, A0_PWM_CH4_Pin)) {SET_BIT(OwnAddr,1<<0);}
+	else {CLEAR_BIT(OwnAddr,1<<0);}
+	//Bit1
+	if (LL_GPIO_IsInputPinSet(A1_PWM_CH2_GPIO_Port, A1_PWM_CH2_Pin)) {SET_BIT(OwnAddr,1<<1);}
+	else {CLEAR_BIT(OwnAddr,1<<1);}
+	//Bit2
+	if (LL_GPIO_IsInputPinSet(A2_PWM_CH1_GPIO_Port, A2_PWM_CH1_Pin)) {SET_BIT(OwnAddr,1<<2);}
+	else {CLEAR_BIT(OwnAddr,1<<2);}
+	//Bit3
+	if (LL_GPIO_IsInputPinSet(A3_LED_GPIO_Port, A3_LED_Pin)) {SET_BIT(OwnAddr,1<<3);}
+	else {CLEAR_BIT(OwnAddr,1<<3);}
+	//Bit4
+	SET_BIT(OwnAddr,1<<4);
+
+	LL_GPIO_DeInit(A0_PWM_CH4_GPIO_Port);
+	LL_GPIO_DeInit(A1_PWM_CH2_GPIO_Port);
+	LL_GPIO_DeInit(A3_LED_GPIO_Port);
+
 
   /* USER CODE END SysInit */
 
@@ -151,8 +141,19 @@ int main(void)
 		Error_Handler();
 	}
 
-	HAL_ADC_Start_DMA(&hadc, (uint32_t*)&adc_buffer, 4);
+	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_1);
+	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_2);
+	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_4);
 
+
+	if(HAL_ADCEx_Calibration_Start(&hadc) != HAL_OK){
+		Error_Handler();
+	}
+
+
+	if(HAL_ADC_Start_DMA(&hadc, (uint32_t*)&adc_buffer, ln_ch) != HAL_OK){
+		Error_Handler();
+	}
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -184,7 +185,7 @@ int main(void)
 			//обработка
 
 			// Запретить прерывания IRQ
-			 __disable_irq ();
+			__disable_irq ();
 
 			aTxBuffer[4] = adc_buffer[0]&0xFF;
 			aTxBuffer[5] = (adc_buffer[0]>>8)&0xFF;
@@ -195,11 +196,13 @@ int main(void)
 			aTxBuffer[18] = adc_buffer[2]&0xFF;
 			aTxBuffer[19] = (adc_buffer[2]>>8)&0xFF;
 
-			 // Разрешить прерывания IRQ
-			 __enable_irq ();
+			// Разрешить прерывания IRQ
+			__enable_irq ();
 
 			adc_Flag = 0;
-			HAL_ADC_Start_DMA(&hadc, (uint32_t*)&adc_buffer, 4);
+			if(HAL_ADC_Start_DMA(&hadc, (uint32_t*)&adc_buffer, ln_ch) != HAL_OK){
+				Error_Handler();
+			}
 		}
 
     /* USER CODE END WHILE */
@@ -283,7 +286,7 @@ void HAL_I2C_SlaveTxCpltCallback(I2C_HandleTypeDef *I2cHandle)
 	aTxBuffer[1]++;
 	aTxBuffer[2]++;
 	aTxBuffer[3]++;
-	*/
+	 */
 	aTxBuffer[0] = htim3.Instance->CCR1 & 0xFF;
 	aTxBuffer[1] = (htim3.Instance->CCR1 >> 8) & 0xFF;
 	aTxBuffer[2] = (htim3.Instance->CCR1 >> 16) & 0xFF;
@@ -323,7 +326,7 @@ void HAL_I2C_SlaveRxCpltCallback(I2C_HandleTypeDef *I2cHandle)
 	aRxBuffer[1]=0x00;
 	aRxBuffer[2]=0x00;
 	aRxBuffer[3]=0x00;
-	*/
+	 */
 
 	htim3.Instance->CCR1 = aRxBuffer[3] |(aRxBuffer[2] << 8)|(aRxBuffer[1] << 16)|(aRxBuffer[0] << 24);
 	en1 = aRxBuffer[4];
@@ -439,31 +442,24 @@ void IN_GPIO_Init(void)
 
 	/**/
 	GPIO_InitStruct.Pin = A1_PWM_CH2_Pin;
-	GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
-	GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
 	LL_GPIO_Init(A1_PWM_CH2_GPIO_Port, &GPIO_InitStruct);
 
 	/**/
 	GPIO_InitStruct.Pin = A1_PWM_CH2_Pin;
-	GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
-	GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
 	LL_GPIO_Init(A2_PWM_CH1_GPIO_Port, &GPIO_InitStruct);
 
 	/**/
 	GPIO_InitStruct.Pin = A3_LED_Pin;
-	GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
-	GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
 	LL_GPIO_Init(A3_LED_GPIO_Port, &GPIO_InitStruct);
 
 }
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
 	/* This is called after the conversion is completed */
-	if(hadc->Instance == ADC1)
-	{
-		HAL_ADC_Stop_DMA(hadc);
-		adc_Flag = 1;
-	}
+
+	HAL_ADC_Stop_DMA(hadc);
+	adc_Flag = 1;
+
 
 }
 /* USER CODE END 4 */

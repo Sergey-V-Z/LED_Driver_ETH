@@ -97,8 +97,9 @@ extern I2C_HandleTypeDef hi2c1;
 extern flash mem_spi;
 
 //переменные для тестов
-uint8_t testI2C_buff[20];
-uint8_t testI2C_RX_buff[20];
+uint8_t testI2C_buff[15];
+uint8_t testI2C_RX_buff[21];
+uint8_t testI2C_RX_buff2[21];
 uint8_t txRedy = 1;
 
 /* USER CODE END Variables */
@@ -226,7 +227,7 @@ void mainTask(void const * argument)
 	testI2C_buff[1] = 2;
 	testI2C_buff[2] = 3;
 	testI2C_buff[3] = 4;
-	testI2C_buff[20] = 5;
+	testI2C_buff[15] = 5;
 
 	HAL_StatusTypeDef status1;
 
@@ -258,9 +259,12 @@ void mainTask(void const * argument)
 		//status1 = HAL_I2C_IsDeviceReady(&hi2c1, 0x40 << 1, 3, 100);
 		if(1){
 			txRedy = 0;
-			status1 = HAL_I2C_Master_Transmit(&hi2c1, (uint16_t)0x40 << 1, testI2C_buff, 4, 100);
+			//status1 = HAL_I2C_Master_Transmit(&hi2c1, (uint16_t)0x10 << 1, testI2C_buff, 4, 100);
 			osDelay(5);
-			status1 = HAL_I2C_Master_Receive(&hi2c1, (uint16_t)0x40 << 1, testI2C_RX_buff, 4, 100);
+			status1 = HAL_I2C_Master_Receive(&hi2c1, (uint16_t)0x10 << 1, testI2C_RX_buff, 21, 100);
+
+			osDelay(5);
+			status1 = HAL_I2C_Master_Receive(&hi2c1, (uint16_t)0x11 << 1, testI2C_RX_buff2, 21, 100);
 		}
 
 		osDelay(1000);
