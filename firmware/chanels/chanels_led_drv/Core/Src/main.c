@@ -107,16 +107,20 @@ int main(void)
 	IN_GPIO_Init();
 
 	//Bit0
-	if (LL_GPIO_IsInputPinSet(A0_PWM_CH4_GPIO_Port, A0_PWM_CH4_Pin)) {SET_BIT(OwnAddr,1<<0);}
+	if (LL_GPIO_IsInputPinSet(A0_PWM_CH4_GPIO_Port, A0_PWM_CH4_Pin))
+	{SET_BIT(OwnAddr,1<<0);}
 	else {CLEAR_BIT(OwnAddr,1<<0);}
 	//Bit1
-	if (LL_GPIO_IsInputPinSet(A1_PWM_CH2_GPIO_Port, A1_PWM_CH2_Pin)) {SET_BIT(OwnAddr,1<<1);}
+	if (LL_GPIO_IsInputPinSet(A1_PWM_CH2_GPIO_Port, A1_PWM_CH2_Pin))
+	{SET_BIT(OwnAddr,1<<1);}
 	else {CLEAR_BIT(OwnAddr,1<<1);}
 	//Bit2
-	if (LL_GPIO_IsInputPinSet(A2_PWM_CH1_GPIO_Port, A2_PWM_CH1_Pin)) {SET_BIT(OwnAddr,1<<2);}
+	if (LL_GPIO_IsInputPinSet(A2_PWM_CH1_GPIO_Port, A2_PWM_CH1_Pin))
+	{SET_BIT(OwnAddr,1<<2);}
 	else {CLEAR_BIT(OwnAddr,1<<2);}
 	//Bit3
-	if (LL_GPIO_IsInputPinSet(A3_LED_GPIO_Port, A3_LED_Pin)) {SET_BIT(OwnAddr,1<<3);}
+	if (LL_GPIO_IsInputPinSet(A3_LED_GPIO_Port, A3_LED_Pin))
+	{SET_BIT(OwnAddr,1<<3);}
 	else {CLEAR_BIT(OwnAddr,1<<3);}
 	//Bit4
 	SET_BIT(OwnAddr,1<<4);
@@ -204,7 +208,7 @@ int main(void)
 				Error_Handler();
 			}
 		}
-
+		HAL_Delay(1);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -328,11 +332,11 @@ void HAL_I2C_SlaveRxCpltCallback(I2C_HandleTypeDef *I2cHandle)
 	aRxBuffer[3]=0x00;
 	 */
 
-	htim3.Instance->CCR1 = aRxBuffer[3] |(aRxBuffer[2] << 8)|(aRxBuffer[1] << 16)|(aRxBuffer[0] << 24);
+	htim3.Instance->CCR1 = aRxBuffer[0] |(aRxBuffer[1] << 8)|(aRxBuffer[2] << 16)|(aRxBuffer[3] << 24);
 	en1 = aRxBuffer[4];
-	htim3.Instance->CCR2 = aRxBuffer[8] |(aRxBuffer[7] << 8)|(aRxBuffer[6] << 16)|(aRxBuffer[5] << 24);
+	htim3.Instance->CCR2 = aRxBuffer[5] |(aRxBuffer[6] << 8)|(aRxBuffer[7] << 16)|(aRxBuffer[8] << 24);
 	en2 = aRxBuffer[9];
-	htim3.Instance->CCR4 = aRxBuffer[13] |(aRxBuffer[12] << 8)|(aRxBuffer[11] << 16)|(aRxBuffer[10] << 24);
+	htim3.Instance->CCR4 = aRxBuffer[10] |(aRxBuffer[11] << 8)|(aRxBuffer[12] << 16)|(aRxBuffer[13] << 24);
 	en3 = aRxBuffer[14];
 }
 

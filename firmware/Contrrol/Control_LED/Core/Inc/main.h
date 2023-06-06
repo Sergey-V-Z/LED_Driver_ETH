@@ -54,10 +54,11 @@ typedef struct
 {
 
 	uint32_t 	PWM;			// шим на каннале
-	uint32_t 	Current;		// ток в канале
-	uint8_t 	IsOn;			// включился ? проверки идет по наличию тока
+	uint32_t 	PWM_out;		// шим на каннале для передачи
+	uint16_t 	Current;		// ток в канале
+	uint8_t 	IsOn;			// включился ?
 	uint8_t 	On_off;			// включение или выключение канаала
-	uint8_t		Channel_number;	// номер канала
+	uint8_t		Name_ch;		// "имя" каннала цыфра (1-45) в общей системе
 
 }led_stat_t;
 
@@ -66,13 +67,23 @@ typedef struct
 
 	led_stat_t led_Sett[3];
 	uint8_t 	I2C_addr;		// адрес I2C  на котором рассположен канналы
-	PCBType 	TypePCB;		// тип платы считывается с самой платы (группы)
+	uint8_t 	RX_buff[21];
+	uint8_t 	TX_buff[15];
 
-}group_stat_t;
+}I2C_t;
 
 typedef struct
 {
-	group_stat_t group_Sett[10];
+
+	I2C_t 		i2c_addr;
+	uint8_t		Channel_number;	// номер канала в пределах одного i2c
+	PCBType 	TypePCB;		// тип платы считывается с самой платы (группы)
+
+}g_stat_t;
+
+typedef struct
+{
+	g_stat_t Global_I2C[45];
 	uint8_t	MAC_end;
 	uint8_t isON_from_settings;
 	uint8_t MAC_end_from_settings;
@@ -80,11 +91,6 @@ typedef struct
 
 }settings_t;
 
-typedef struct
-{
-	uint8_t 	CountAddresI2C;
-	uint16_t 	I2C_addr[128];		// адрес I2C  на котором рассположен каннал
-}I2C_Map_t;
 
 /* USER CODE END ET */
 
@@ -95,7 +101,7 @@ typedef struct
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
-#define ID_STRING " Controll LED ETH ver1 05.05.23"
+#define ID_STRING " Controll LED ETH ver1 05.06.23"
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/

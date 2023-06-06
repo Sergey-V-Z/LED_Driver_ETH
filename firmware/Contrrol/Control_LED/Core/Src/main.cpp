@@ -66,7 +66,7 @@ pins_spi_t Hold = {HOLD_GPIO_Port, HOLD_Pin};
 flash mem_spi;
 
 //for i2c
-I2C_Map_t I2C_Map;
+//g_stat_t I2C_net[45];
 
 /* USER CODE END PV */
 
@@ -117,28 +117,28 @@ int main(void)
 	// read jumpers
 	uint8_t endMAC;
 	//Bit0
-	if (HAL_GPIO_ReadPin(MAC_b0_GPIO_Port, MAC_b0_Pin)) SET_BIT(endMAC,0);
+	if (HAL_GPIO_ReadPin(MAC_b0_GPIO_Port, MAC_b0_Pin)) SET_BIT(endMAC,1<<0);
 	else CLEAR_BIT(endMAC,0);
 	//Bit1
-	if (HAL_GPIO_ReadPin(MAC_b1_GPIO_Port, MAC_b1_Pin)) SET_BIT(endMAC,1);
+	if (HAL_GPIO_ReadPin(MAC_b1_GPIO_Port, MAC_b1_Pin)) SET_BIT(endMAC,1<<1);
 	else CLEAR_BIT(endMAC,1);
 	//Bit2
-	if (HAL_GPIO_ReadPin(MAC_b2_GPIO_Port, MAC_b2_Pin)) SET_BIT(endMAC,2);
+	if (HAL_GPIO_ReadPin(MAC_b2_GPIO_Port, MAC_b2_Pin)) SET_BIT(endMAC,1<<2);
 	else CLEAR_BIT(endMAC,2);
 	//Bit3
-	if (HAL_GPIO_ReadPin(MAC_b3_GPIO_Port, MAC_b3_Pin)) SET_BIT(endMAC,3);
+	if (HAL_GPIO_ReadPin(MAC_b3_GPIO_Port, MAC_b3_Pin)) SET_BIT(endMAC,1<<3);
 	else CLEAR_BIT(endMAC,3);
 	//Bit4
-	if (HAL_GPIO_ReadPin(MAC_b4_GPIO_Port, MAC_b4_Pin)) SET_BIT(endMAC,4);
+	if (HAL_GPIO_ReadPin(MAC_b4_GPIO_Port, MAC_b4_Pin)) SET_BIT(endMAC,1<<4);
 	else CLEAR_BIT(endMAC,4);
 	//Bit5
-	if (HAL_GPIO_ReadPin(MAC_b5_GPIO_Port, MAC_b5_Pin)) SET_BIT(endMAC,5);
+	if (HAL_GPIO_ReadPin(MAC_b5_GPIO_Port, MAC_b5_Pin)) SET_BIT(endMAC,1<<5);
 	else CLEAR_BIT(endMAC,5);
 	//Bit6
-	if (HAL_GPIO_ReadPin(MAC_b6_GPIO_Port, MAC_b6_Pin)) SET_BIT(endMAC,6);
+	if (HAL_GPIO_ReadPin(MAC_b6_GPIO_Port, MAC_b6_Pin)) SET_BIT(endMAC,1<<6);
 	else CLEAR_BIT(endMAC,6);
 	//Bit7
-	if (HAL_GPIO_ReadPin(MAC_b7_GPIO_Port, MAC_b7_Pin)) SET_BIT(endMAC,7);
+	if (HAL_GPIO_ReadPin(MAC_b7_GPIO_Port, MAC_b7_Pin)) SET_BIT(endMAC,1<<7);
 	else CLEAR_BIT(endMAC,7);
 
 
@@ -163,28 +163,7 @@ int main(void)
 		settings.version = 10;
 
 		// Записываем канналы
-		for (int ch = 0; ch < I2C_Map.CountAddresI2C; ++ch) {
-			settings.group_Sett[ch].I2C_addr = I2C_Map.I2C_addr[ch];
-			settings.group_Sett[ch].led_Sett[0].Channel_number = ch;
-			settings.group_Sett[ch].led_Sett[1].Channel_number = ch + 1;
-			settings.group_Sett[ch].led_Sett[2].Channel_number = ch + 2;
 
-			settings.group_Sett[ch].led_Sett[0].Current = 0;
-			settings.group_Sett[ch].led_Sett[1].Current = 0;
-			settings.group_Sett[ch].led_Sett[2].Current = 0;
-
-			settings.group_Sett[ch].led_Sett[0].On_off = 0;
-			settings.group_Sett[ch].led_Sett[1].On_off = 0;
-			settings.group_Sett[ch].led_Sett[2].On_off = 0;
-
-			settings.group_Sett[ch].led_Sett[0].PWM = 0;
-			settings.group_Sett[ch].led_Sett[1].PWM = 0;
-			settings.group_Sett[ch].led_Sett[2].PWM = 0;
-
-			settings.group_Sett[ch].led_Sett[0].IsOn = 0;
-			settings.group_Sett[ch].led_Sett[1].IsOn = 0;
-			settings.group_Sett[ch].led_Sett[2].IsOn = 0;
-		}
 
 		mem_spi.Write(settings);
 
@@ -197,11 +176,7 @@ int main(void)
 	} else {
 
 		//иначе выключаем все канналы
-		for (int ch = 0; ch < I2C_Map.CountAddresI2C; ++ch) {
-			settings.group_Sett[ch].led_Sett[0].On_off = 0;
-			settings.group_Sett[ch].led_Sett[1].On_off = 0;
-			settings.group_Sett[ch].led_Sett[2].On_off = 0;
-		}
+
 	}
 
   /* USER CODE END 2 */
