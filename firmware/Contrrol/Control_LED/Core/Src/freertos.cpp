@@ -332,17 +332,19 @@ void mainTask(void const * argument)
 
 					TX_buff[14] = settings.Global_I2C[var].i2c_addr.led_Sett.On_off;
 
+					osDelay(5);
 					status1 = HAL_I2C_Master_Transmit(&hi2c1,
 														(uint16_t)settings.Global_I2C[var].i2c_addr.I2C_addr << 1,
-														RX_buff,
+														TX_buff,
 														15, 100);
+					osDelay(5);
 				}
 
 			}
 
 		}
 
-		osDelay(1000);
+		osDelay(100);
 	}
   /* USER CODE END mainTask */
 }

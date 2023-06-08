@@ -66,6 +66,7 @@ uint8_t rxEnd = 1;
 volatile uint32_t OwnAddr = 0;
 uint8_t en1 = 0, en2 = 0, en3 = 0;
 uint8_t adc_Flag = 0;
+uint16_t PWM1 = 0, PWM2 = 0, PWM3 = 0;
 
 /* USER CODE END PV */
 
@@ -176,6 +177,7 @@ int main(void)
 			Xfer_Complete =0;
 		}
 
+		/*
 		if(en1) LL_GPIO_SetOutputPin(EN1_GPIO_Port, EN1_Pin);
 		else LL_GPIO_ResetOutputPin(EN1_GPIO_Port, EN1_Pin);
 
@@ -184,12 +186,22 @@ int main(void)
 
 		if(en3) LL_GPIO_SetOutputPin(EN3_GPIO_Port, EN3_Pin);
 		else LL_GPIO_ResetOutputPin(EN3_GPIO_Port, EN3_Pin);
+		*/
+
+		if(en1) htim3.Instance->CCR1 = PWM1;
+		else htim3.Instance->CCR1 = 0;
+
+		if(en2) htim3.Instance->CCR2 = PWM2;
+		else htim3.Instance->CCR2 = 0;
+
+		if(en3) htim3.Instance->CCR4 = PWM3;
+		else htim3.Instance->CCR4 = 0;
 
 		if (adc_Flag){
 			//обработка
 
 			// Запретить прерывания IRQ
-			__disable_irq ();
+			//__disable_irq ();
 
 			aTxBuffer[4] = adc_buffer[0]&0xFF;
 			aTxBuffer[5] = (adc_buffer[0]>>8)&0xFF;
@@ -201,7 +213,7 @@ int main(void)
 			aTxBuffer[19] = (adc_buffer[2]>>8)&0xFF;
 
 			// Разрешить прерывания IRQ
-			__enable_irq ();
+			//__enable_irq ();
 
 			adc_Flag = 0;
 			if(HAL_ADC_Start_DMA(&hadc, (uint32_t*)&adc_buffer, ln_ch) != HAL_OK){
@@ -332,11 +344,11 @@ void HAL_I2C_SlaveRxCpltCallback(I2C_HandleTypeDef *I2cHandle)
 	aRxBuffer[3]=0x00;
 	 */
 
-	htim3.Instance->CCR1 = aRxBuffer[0] |(aRxBuffer[1] << 8)|(aRxBuffer[2] << 16)|(aRxBuffer[3] << 24);
+	PWM1 = aRxBuffer[0] |(aRxBuffer[1] << 8)|(aRxBuffer[2] << 16)|(aRxBuffer[3] << 24);
 	en1 = aRxBuffer[4];
-	htim3.Instance->CCR2 = aRxBuffer[5] |(aRxBuffer[6] << 8)|(aRxBuffer[7] << 16)|(aRxBuffer[8] << 24);
+	PWM2 = aRxBuffer[5] |(aRxBuffer[6] << 8)|(aRxBuffer[7] << 16)|(aRxBuffer[8] << 24);
 	en2 = aRxBuffer[9];
-	htim3.Instance->CCR4 = aRxBuffer[10] |(aRxBuffer[11] << 8)|(aRxBuffer[12] << 16)|(aRxBuffer[13] << 24);
+	PWM3 = aRxBuffer[10] |(aRxBuffer[11] << 8)|(aRxBuffer[12] << 16)|(aRxBuffer[13] << 24);
 	en3 = aRxBuffer[14];
 }
 
@@ -475,10 +487,12 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
+	NVIC_SystemReset();
 	/* User can add his own implementation to report the HAL error return state */
 	__disable_irq();
 	while (1)
 	{
+
 	}
   /* USER CODE END Error_Handler_Debug */
 }
