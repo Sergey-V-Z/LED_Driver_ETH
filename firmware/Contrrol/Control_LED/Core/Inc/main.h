@@ -65,10 +65,10 @@ typedef struct
 typedef struct
 {
 
-	led_stat_t led_Sett[3];
+	led_stat_t led_Sett;
 	uint8_t 	I2C_addr;		// адрес I2C  на котором рассположен канналы
-	uint8_t 	RX_buff[21];
-	uint8_t 	TX_buff[15];
+	//uint8_t 	RX_buff[21];
+	//uint8_t 	TX_buff[15];
 
 }I2C_t;
 
@@ -108,7 +108,8 @@ typedef struct
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-
+int set_i2c_dev(uint8_t Addr, uint8_t CH, uint8_t Name);
+int del_i2c_dev(uint8_t Name);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/

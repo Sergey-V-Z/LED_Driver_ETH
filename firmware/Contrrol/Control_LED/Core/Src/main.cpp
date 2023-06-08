@@ -154,7 +154,7 @@ int main(void)
 
 	mem_spi.Read(&settings);
 
-	if ((settings.MAC_end == 0) | (settings.MAC_end == 0xFFFFFFFF) | resetSettings)
+	if ((settings.MAC_end == 0) | (settings.MAC_end == 0xFF) | resetSettings)
 	{
 		mem_spi.W25qxx_EraseSector(0);
 		settings.isON_from_settings = false;
