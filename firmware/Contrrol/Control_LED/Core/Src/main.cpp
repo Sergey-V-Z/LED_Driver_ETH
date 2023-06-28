@@ -118,28 +118,28 @@ int main(void)
 	uint8_t endMAC;
 	//Bit0
 	if (HAL_GPIO_ReadPin(MAC_b0_GPIO_Port, MAC_b0_Pin)) SET_BIT(endMAC,1<<0);
-	else CLEAR_BIT(endMAC,0);
+	else CLEAR_BIT(endMAC,1<<0);
 	//Bit1
 	if (HAL_GPIO_ReadPin(MAC_b1_GPIO_Port, MAC_b1_Pin)) SET_BIT(endMAC,1<<1);
-	else CLEAR_BIT(endMAC,1);
+	else CLEAR_BIT(endMAC,1<<1);
 	//Bit2
 	if (HAL_GPIO_ReadPin(MAC_b2_GPIO_Port, MAC_b2_Pin)) SET_BIT(endMAC,1<<2);
-	else CLEAR_BIT(endMAC,2);
+	else CLEAR_BIT(endMAC,1<<2);
 	//Bit3
 	if (HAL_GPIO_ReadPin(MAC_b3_GPIO_Port, MAC_b3_Pin)) SET_BIT(endMAC,1<<3);
-	else CLEAR_BIT(endMAC,3);
+	else CLEAR_BIT(endMAC,1<<3);
 	//Bit4
 	if (HAL_GPIO_ReadPin(MAC_b4_GPIO_Port, MAC_b4_Pin)) SET_BIT(endMAC,1<<4);
-	else CLEAR_BIT(endMAC,4);
+	else CLEAR_BIT(endMAC,1<<4);
 	//Bit5
 	if (HAL_GPIO_ReadPin(MAC_b5_GPIO_Port, MAC_b5_Pin)) SET_BIT(endMAC,1<<5);
-	else CLEAR_BIT(endMAC,5);
+	else CLEAR_BIT(endMAC,1<<5);
 	//Bit6
 	if (HAL_GPIO_ReadPin(MAC_b6_GPIO_Port, MAC_b6_Pin)) SET_BIT(endMAC,1<<6);
-	else CLEAR_BIT(endMAC,6);
+	else CLEAR_BIT(endMAC,1<<6);
 	//Bit7
 	if (HAL_GPIO_ReadPin(MAC_b7_GPIO_Port, MAC_b7_Pin)) SET_BIT(endMAC,1<<7);
-	else CLEAR_BIT(endMAC,7);
+	else CLEAR_BIT(endMAC,1<<7);
 
 
 
@@ -160,6 +160,24 @@ int main(void)
 		settings.isON_from_settings = false;
 		settings.MAC_end = endMAC;
 		settings.MAC_end_from_settings = 1;
+
+		settings.DHCPset = true;
+
+		settings.saveIP.ip[0] = 192;
+		settings.saveIP.ip[1] = 168;
+		settings.saveIP.ip[2] = 0;
+		settings.saveIP.ip[3] = 2;
+
+		settings.saveIP.mask[0] = 255;
+		settings.saveIP.mask[1] = 255;
+		settings.saveIP.mask[2] = 255;
+		settings.saveIP.mask[3] = 0;
+
+		settings.saveIP.gateway[0] = 192;
+		settings.saveIP.gateway[1] = 168;
+		settings.saveIP.gateway[2] = 0;
+		settings.saveIP.gateway[3] = 1;
+
 		settings.version = 10;
 
 		// Записываем канналы

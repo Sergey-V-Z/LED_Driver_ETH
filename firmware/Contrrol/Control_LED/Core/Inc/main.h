@@ -83,10 +83,21 @@ typedef struct
 
 typedef struct
 {
+
+	uint8_t 	ip[4];// = {192, 168, 0, 2};
+	uint8_t		mask[4];//  = {255, 255, 255, 0};
+	uint8_t 	gateway[4];// = {192, 168, 0, 1};
+
+}setIP_t;
+
+typedef struct
+{
 	g_stat_t Global_I2C[45];
 	uint8_t	MAC_end;
 	uint8_t isON_from_settings;
 	uint8_t MAC_end_from_settings;
+	setIP_t	saveIP;
+	uint8_t DHCPset;
 	uint8_t version;
 
 }settings_t;

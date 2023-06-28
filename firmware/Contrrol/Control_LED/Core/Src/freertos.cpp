@@ -268,6 +268,12 @@ void mainTask(void const * argument)
 									RX_buff,
 									21, 100);
 
+					if(status1 != HAL_OK){
+						LED_error.LEDon();
+					}
+					else{
+						LED_error.LEDoff();
+					}
 					//буффер рассовываем по переменным (переделать в указатели)
 
 					// ch1 *******************************************************
