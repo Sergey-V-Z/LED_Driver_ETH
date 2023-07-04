@@ -34,23 +34,12 @@ using namespace std;
 #include "api.h"
 #include <iostream>
 #include <vector>
-#include "hcsr04_driver.h"
+//#include "hcsr04_driver.h"
+#include "device_API.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-struct mesage_t{
-	uint32_t cmd;
-	uint32_t addres_var;
-	uint32_t data_in;
-	uint32_t data_in1;
-	bool need_resp = false;
-	bool data_in_is;
-	uint32_t data_out;
-	string err; // сообщение клиенту об ошибке в сообщении
-	bool f_bool = false; // наличие ошибки в сообшении
-};
-
 
 /* USER CODE END PTD */
 
@@ -81,8 +70,8 @@ uint32_t pwmSens;
 uint16_t adc_buffer[24] = {0};
 uint16_t adc_buffer2[24] = {0};
 
-uint8_t TX_buff[15]={0};
-uint8_t RX_buff[21]={0};
+uint8_t TX_buff[15]={0}; // i2c buff
+uint8_t RX_buff[21]={0}; // i2c buff
 
 extern led LED_IPadr;
 extern led LED_error;
@@ -235,9 +224,9 @@ void mainTask(void const * argument)
 	for (int var = 0; var < 128; ++var) {
 		I2C_Map.I2C_addr[var] = 0;
 	}
-	*/
+	 */
 
-/*
+	/*
 	// Сканируем I2C и заносим в карту
 	for(int i=1; i<128; i++)
 	{
@@ -250,7 +239,7 @@ void mainTask(void const * argument)
 			I2C_Map.CountAddresI2C ++;
 		}
 	}
-*/
+	 */
 	/* Infinite loop */
 	for(;;)
 	{
@@ -264,9 +253,9 @@ void mainTask(void const * argument)
 				if((settings.Global_I2C[var].i2c_addr.I2C_addr >= START_ADR_I2C) && (settings.Global_I2C[var].i2c_addr.I2C_addr <= (START_ADR_I2C + MAX_ADR_I2C))){
 					// запрос данных
 					status1 = HAL_I2C_Master_Receive(&hi2c1,
-									(uint16_t)settings.Global_I2C[var].i2c_addr.I2C_addr << 1,
-									RX_buff,
-									21, 100);
+							(uint16_t)settings.Global_I2C[var].i2c_addr.I2C_addr << 1,
+							RX_buff,
+							21, 100);
 
 					if(status1 != HAL_OK){
 						LED_error.LEDon();
@@ -340,9 +329,9 @@ void mainTask(void const * argument)
 
 					osDelay(5);
 					status1 = HAL_I2C_Master_Transmit(&hi2c1,
-														(uint16_t)settings.Global_I2C[var].i2c_addr.I2C_addr << 1,
-														TX_buff,
-														15, 100);
+							(uint16_t)settings.Global_I2C[var].i2c_addr.I2C_addr << 1,
+							TX_buff,
+							15, 100);
 					osDelay(5);
 				}
 
@@ -435,7 +424,6 @@ void eth_Task(void const * argument)
 {
   /* USER CODE BEGIN eth_Task */
 
-
 	while(gnetif.ip_addr.addr == 0){osDelay(1);}	//ждем получение адреса
 	LED_IPadr.LEDon();
 	osDelay(1000);
@@ -452,12 +440,6 @@ void eth_Task(void const * argument)
 	void 		*in_data = NULL;
 	uint16_t 		data_size = 0;
 
-	//Флаги для разбора сообщения
-	string f_cmd("C");
-	string f_addr("A");
-	string f_datd("D");
-	string f_datd1("N");
-	string delim("x");
 
 	/* Infinite loop */
 	for(;;)
@@ -484,203 +466,9 @@ void eth_Task(void const * argument)
 								netbuf_data(netbuf,&in_data,&data_size);//get pointer and data size of the buffer
 								in_str.assign((char*)in_data, data_size);//copy in string
 								/*-----------------------------------------------------------------------------------------------------------------------------*/
-								// Парсинг
-								vector<string> arr_msg;
-								vector<mesage_t> arr_cmd;
-								size_t prev = 0;
-								size_t next;
-								size_t delta = delim.length();
 
-								//разбить на сообщения
-								while( ( next = in_str.find( delim, prev ) ) != string::npos ){
-									arr_msg.push_back( in_str.substr( prev, (next +1)-prev ) );
-									prev = next + delta;
-								}
-								//arr_msg.push_back( in_str.substr( prev ) );
+								string resp = Сommand_execution(in_str);
 
-								//занести сообщения в структуру
-								int count_msg = arr_msg.size();
-								for (int i = 0; i < count_msg; ++i) {
-									prev = 0;
-									next = 0;
-									size_t posC = 0;
-									size_t posA = 0;
-									size_t posD = 0;
-									size_t posD1 = 0;
-									size_t posx = 0;
-									mesage_t temp_msg;
-
-									// выделение комманды
-									delta = f_cmd.length();
-									next = arr_msg[i].find(f_cmd);
-									posC = next;
-									if(next == string::npos){
-										//Ошибка
-										temp_msg.err = "wrong format in C flag";
-										temp_msg.f_bool = true;
-										arr_cmd.push_back(temp_msg);
-										continue;
-
-									}
-									prev = next + delta;
-
-									// выделение адреса
-									delta = f_addr.length();
-									next = arr_msg[i].find(f_addr, prev);
-									posA = next;
-									if(next == string::npos){
-										//Ошибка
-										temp_msg.err = "wrong format in A flag";
-										temp_msg.f_bool = true;
-										arr_cmd.push_back(temp_msg);
-										continue;
-									}
-									prev = next + delta;
-
-									// выделение данных
-									delta = f_datd.length();
-									next = arr_msg[i].find(f_datd, prev);
-									posD = next;
-									if(next == string::npos){
-										//Ошибка
-										temp_msg.err = "wrong format in D flag";
-										temp_msg.f_bool = true;
-										arr_cmd.push_back(temp_msg);
-										continue;
-									}
-									prev = next + delta;
-
-									// выделение данных 1
-									delta = f_datd1.length();
-									next = arr_msg[i].find(f_datd1, prev);
-									posD1 = next;
-									if(next == string::npos){
-										//Ошибка
-										temp_msg.err = "wrong format in D1 flag";
-										temp_msg.f_bool = true;
-										arr_cmd.push_back(temp_msg);
-										continue;
-									}
-									prev = next + delta;
-
-									// выделение данных
-									delta = delim.length();
-									next = arr_msg[i].find(delim, prev);
-									posx = next;
-									if(next == string::npos){
-										//Ошибка
-										temp_msg.err = "wrong format in x flag";
-										temp_msg.f_bool = true;
-										arr_cmd.push_back(temp_msg);
-										continue;
-									}
-
-									temp_msg.cmd = (uint32_t)stoi(arr_msg[i].substr(posC +1, (posA -1) - posC));
-									temp_msg.addres_var = (uint32_t)stoi(arr_msg[i].substr(posA +1, (posD -1) - posA));
-									temp_msg.data_in = (uint32_t)stoi(arr_msg[i].substr(posD +1, (posD1 -1) - posD));
-									temp_msg.data_in1 = (uint32_t)stoi(arr_msg[i].substr(posD1 +1, (posx -1) - posD1));
-									arr_cmd.push_back(temp_msg);
-								}
-								// Закончили парсинг
-								/*-----------------------------------------------------------------------------------------------------------------------------*/
-								//Выполнение комманд
-								int count_cmd = arr_cmd.size();
-								int ret = 0;
-								for (int i = 0; i < count_cmd; ++i) {
-
-									switch (arr_cmd[i].cmd) {
-									case 1: //
-
-										ret = set_i2c_dev(arr_cmd[i].addres_var, arr_cmd[i].data_in, arr_cmd[i].data_in1);
-										switch (ret) {
-											case 1:
-												arr_cmd[i].err = "err in D";
-												break;
-											case 2:
-												arr_cmd[i].err = "err in N";
-												break;
-											case 3:
-												arr_cmd[i].err = "err in Addr";
-												break;
-											case 4:
-												arr_cmd[i].err = "err not empty";
-												break;
-											default:
-												arr_cmd[i].err = "OK";
-												break;
-										}
-
-										break;
-									case 2: //
-										del_i2c_dev(arr_cmd[i].data_in1);
-										arr_cmd[i].err = "OK";
-										break;
-									case 3:
-										//Sensor1.PwrSet(arr_cmd[i].data_in);
-										settings.Global_I2C[arr_cmd[i].data_in1].i2c_addr.led_Sett.On_off = arr_cmd[i].data_in;
-										arr_cmd[i].err = "OK";
-										break;
-									case 4:
-										//Sensor2.PwrSet(arr_cmd[i].data_in);
-										settings.Global_I2C[arr_cmd[i].data_in1].i2c_addr.led_Sett.PWM_out = arr_cmd[i].data_in;
-										arr_cmd[i].err = "OK";
-										break;
-									case 5: //
-										//arr_cmd[i].data_out = (uint32_t)Sensor1.GetResult();
-										arr_cmd[i].data_out =  settings.Global_I2C[arr_cmd[i].data_in1].i2c_addr.led_Sett.PWM;
-										arr_cmd[i].need_resp = true;
-										arr_cmd[i].err = "OK";
-										break;
-									case 6://
-										//arr_cmd[i].data_out = (uint32_t)Sensor2.GetResult();
-										arr_cmd[i].data_out =  settings.Global_I2C[arr_cmd[i].data_in1].i2c_addr.led_Sett.Current;
-										arr_cmd[i].need_resp = true;
-										arr_cmd[i].err = "OK";
-										break;
-									case 7://
-										arr_cmd[i].data_out =  settings.Global_I2C[arr_cmd[i].data_in1].i2c_addr.led_Sett.IsOn;
-										arr_cmd[i].need_resp = true;
-										arr_cmd[i].err = "OK";
-										break;
-									case 8:
-										mem_spi.W25qxx_EraseSector(0);
-										osDelay(5);
-										mem_spi.Write(settings);
-										arr_cmd[i].err = "OK";
-										//arr_cmd[i].err = "no_CMD";
-										break;
-									case 9:
-										/*										Sensor1.change_settings = true; // включение режима настроек
-										Sensor1.Depth = arr_cmd[i].data_in;
-										Sensor1.change_settings = false; // выключение режима настроек
-										arr_cmd[i].err = "OK";*/
-										arr_cmd[i].err = "no_CMD";
-										break;
-									case 10:
-										/*										Sensor2.change_settings = true; // включение режима настроек
-										Sensor2.Depth = arr_cmd[i].data_in;
-										Sensor2.change_settings = false; // выключение режима настроек
-										arr_cmd[i].err = "OK";*/
-										arr_cmd[i].err = "no_CMD";
-										break;
-
-									default:
-										arr_cmd[i].err = "err_CMD";
-										break;
-									}
-								}
-								/*-----------------------------------------------------------------------------------------------------------------------------*/
-								//Формируем ответ
-								string resp;
-								for (int i = 0; i < count_cmd; ++i) {
-									resp.append(f_cmd + to_string(arr_cmd[i].cmd));
-									if(arr_cmd[i].need_resp){
-										resp.append(f_datd + to_string(arr_cmd[i].data_out));
-									}else{
-										resp.append(f_datd + arr_cmd[i].err);
-									}
-									resp.append(delim);
-								}
 								netconn_write(newconn, resp.c_str(), resp.size(), NETCONN_COPY);
 
 							} while (netbuf_next(netbuf) >= 0);
@@ -801,4 +589,5 @@ int del_i2c_dev(uint8_t Name){
 
 	return ret;
 }
+
 /* USER CODE END Application */

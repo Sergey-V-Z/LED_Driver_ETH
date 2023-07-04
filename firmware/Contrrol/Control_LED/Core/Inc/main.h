@@ -93,9 +93,9 @@ typedef struct
 typedef struct
 {
 	g_stat_t Global_I2C[45];
-	uint8_t	MAC_end;
+	uint8_t	MAC[6];
 	uint8_t isON_from_settings;
-	uint8_t MAC_end_from_settings;
+	uint8_t IP_end_from_settings;
 	setIP_t	saveIP;
 	uint8_t DHCPset;
 	uint8_t version;
@@ -124,6 +124,8 @@ int del_i2c_dev(uint8_t Name);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define MAC_IP_Pin_Pin GPIO_PIN_2
+#define MAC_IP_Pin_GPIO_Port GPIOE
 #define R_Pin GPIO_PIN_13
 #define R_GPIO_Port GPIOC
 #define G_Pin GPIO_PIN_14
