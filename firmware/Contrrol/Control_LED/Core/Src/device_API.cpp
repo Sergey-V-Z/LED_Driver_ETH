@@ -4,6 +4,7 @@
  *  Created on: 3 июл. 2023 г.
  *      Author: Ierixon-HP
  */
+
 #include "flash_spi.h"
 #include "LED.h"
 #include "lwip.h"
@@ -21,6 +22,19 @@ extern I2C_HandleTypeDef hi2c1;
 extern flash mem_spi;
 //структуры для netcon
 extern struct netif gnetif;
+
+/* Typedef -----------------------------------------------------------*/
+struct mesage_t{
+	uint32_t cmd;
+	uint32_t addres_var;
+	uint32_t data_in;
+	uint32_t data_in1;
+	bool need_resp = false;
+	bool data_in_is;
+	uint32_t data_out;
+	string err; // сообщение клиенту об ошибке в сообщении
+	bool f_bool = false; // наличие ошибки в сообшении
+};
 
 //Флаги для разбора сообщения
 string f_cmd("C");
@@ -185,30 +199,30 @@ string Сommand_execution(string in_str){
 
 			switch (arr_cmd[i].cmd) {
 			case 1: // Add dev in cell
-			ret = set_i2c_dev(arr_cmd[i].addres_var, arr_cmd[i].data_in, arr_cmd[i].data_in1);
-			switch (ret) {
-			case 1:
-				arr_cmd[i].err = "out of range after D";
-				arr_cmd[i].f_bool = true;
-				break;
-			case 2:
-				arr_cmd[i].err = "out of range after N";
-				arr_cmd[i].f_bool = true;
-				break;
-			case 3:
-				arr_cmd[i].err = "out of range after A";
-				arr_cmd[i].f_bool = true;
-				break;
-			case 4:
-				arr_cmd[i].err = "err not empty cell";
-				arr_cmd[i].f_bool = true;
-				break;
-			default:
-				arr_cmd[i].err = "OK";
-				break;
-			}
+				ret = set_i2c_dev(arr_cmd[i].addres_var, arr_cmd[i].data_in, arr_cmd[i].data_in1);
+				switch (ret) {
+				case 1:
+					arr_cmd[i].err = "out of range after D";
+					arr_cmd[i].f_bool = true;
+					break;
+				case 2:
+					arr_cmd[i].err = "out of range after N";
+					arr_cmd[i].f_bool = true;
+					break;
+				case 3:
+					arr_cmd[i].err = "out of range after A";
+					arr_cmd[i].f_bool = true;
+					break;
+				case 4:
+					arr_cmd[i].err = "err not empty cell";
+					arr_cmd[i].f_bool = true;
+					break;
+				default:
+					arr_cmd[i].err = "OK";
+					break;
+				}
 
-			break;
+				break;
 			case 2: // Delet dev
 				del_i2c_dev(arr_cmd[i].data_in1);
 				arr_cmd[i].err = "OK";
@@ -272,14 +286,17 @@ string Сommand_execution(string in_str){
 				settings.MAC[arr_cmd[i].addres_var] = arr_cmd[i].data_in;
 				arr_cmd[i].err = "OK";
 				break;
-			case 16:
-				/*										Sensor2.change_settings = true; // включение режима настроек
-														Sensor2.Depth = arr_cmd[i].data_in;
-														Sensor2.change_settings = false; // выключение режима настроек
-														arr_cmd[i].err = "OK";
-				 */
-				arr_cmd[i].err = "Empty cmd";
-				arr_cmd[i].f_bool = true;
+			case 16:// errors
+				if(arr_cmd[i].addres_var){
+					arr_cmd[i].data_out = settings.Global_I2C[arr_cmd[i].data_in1].ERR_counter;
+					settings.Global_I2C[arr_cmd[i].data_in1].ERR_counter = 0;
+				}else{
+					arr_cmd[i].data_out = settings.Global_I2C[arr_cmd[i].data_in1].last_ERR;
+					settings.Global_I2C[arr_cmd[i].data_in1].last_ERR = 0;
+				}
+
+				arr_cmd[i].need_resp = true;
+				arr_cmd[i].err = "OK";
 				break;
 			default:
 				arr_cmd[i].err = "Command does not exist";

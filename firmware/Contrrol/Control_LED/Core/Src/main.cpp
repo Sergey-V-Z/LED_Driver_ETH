@@ -240,8 +240,18 @@ int main(void)
 
 		settings.version = 10;
 
-		// Записываем канналы
-
+		// Clear
+		for (int var = 0; var < 45; ++var) {
+			del_i2c_dev(var);
+		}
+		// Write default
+		uint8_t name_num = 0;
+		for (int var = 0; var < MAX_ADR_I2C; ++var) {
+			for (int ch = 0; ch < 3; ++ch) {
+				set_i2c_dev(START_ADR_I2C + var, ch, name_num);
+				++name_num;
+			}
+		}
 
 		mem_spi.Write(settings);
 
@@ -364,7 +374,7 @@ void finishedBlink(){
 #define  timeBetween 300
 
 	// finished blink
-	HAL_GPIO_WritePin(R_GPIO_Port, R_Pin, GPIO_PIN_SET); // PC15 VD4
+	HAL_GPIO_WritePin(B_GPIO_Port, B_Pin, GPIO_PIN_SET); // PC15 VD4
 	HAL_GPIO_WritePin(R_GPIO_Port, R_Pin, GPIO_PIN_SET); // PC13 VD2
 	HAL_GPIO_WritePin(G_GPIO_Port, G_Pin, GPIO_PIN_SET); // PC14 VD3
 
@@ -398,6 +408,88 @@ void timoutBlink(){
 		HAL_GPIO_TogglePin(G_GPIO_Port, G_Pin); // PC14 VD3
 		HAL_Delay(800);
 	}
+}
+
+
+/*
+ * функция установки нового устройства
+ * Addr - I2C адрес
+ * CH	- один из трех канвлов
+ * Name	- глобальное имя от 1 до 45
+ */
+int set_i2c_dev(uint8_t Addr, uint8_t CH, uint8_t Name){
+	uint8_t ret = 0;
+	// проверка входных данных
+	if(CH > 2){
+		return 1;
+	}
+	if((Name > 44)){
+		return 2;
+	}
+	//если вышли за диапазон
+	if((Addr <  START_ADR_I2C) || (Addr > (START_ADR_I2C + MAX_ADR_I2C))){
+		return 3;
+	}
+
+	// если в ячейке записанно число которое входит в диапазон
+	if ((settings.Global_I2C[Name].i2c_addr.I2C_addr >= START_ADR_I2C) &&
+			(settings.Global_I2C[Name].i2c_addr.I2C_addr <= (START_ADR_I2C + MAX_ADR_I2C))) {
+		if(settings.Global_I2C[Name].i2c_addr.led_Sett.Name_ch < 44){
+			return 4;
+		}
+	}
+
+	//mem_spi.W25qxx_EraseSector(0);
+	// записываем данные в память и сохраняем на флешку
+	settings.Global_I2C[Name].i2c_addr.I2C_addr = Addr;
+	settings.Global_I2C[Name].Channel_number = CH;
+	settings.Global_I2C[Name].i2c_addr.led_Sett.Name_ch = Name;
+	settings.Global_I2C[Name].ERR_counter = 0;
+	settings.Global_I2C[Name].last_ERR = 0;
+
+	settings.Global_I2C[Name].i2c_addr.led_Sett.Current = 0;
+	settings.Global_I2C[Name].i2c_addr.led_Sett.IsOn = 0;
+	settings.Global_I2C[Name].i2c_addr.led_Sett.On_off = 0;
+	settings.Global_I2C[Name].i2c_addr.led_Sett.PWM = 0;
+	settings.Global_I2C[Name].i2c_addr.led_Sett.PWM_out = 0;
+	//mem_spi.Write(settings);
+
+	return ret;
+}
+
+/*
+ * функция удвления устройства
+ * Addr - I2C адрес
+ * CH	- один из трех канвлов
+ * Name	- глобальное имя от 1 до 45
+ */
+int del_i2c_dev(uint8_t Name){
+	uint8_t ret = 0;
+
+	if((Name > 44)){
+		return -2;
+	}
+
+	//mem_spi.W25qxx_EraseSector(0);
+	// записываем данные в память и сохраняем на флешку
+	settings.Global_I2C[Name].i2c_addr.I2C_addr = 0xff;
+	settings.Global_I2C[Name].Channel_number = 0xff;
+	settings.Global_I2C[Name].TypePCB = NoInit;
+	settings.Global_I2C[Name].ERR_counter = 0xffffffff;
+	settings.Global_I2C[Name].last_ERR = 0xffffffff;
+
+	settings.Global_I2C[Name].i2c_addr.led_Sett.Name_ch = 0xff;
+	settings.Global_I2C[Name].i2c_addr.led_Sett.Current = 0xff;
+	settings.Global_I2C[Name].i2c_addr.led_Sett.IsOn = 0xff;
+	settings.Global_I2C[Name].i2c_addr.led_Sett.On_off = 0xff;
+	settings.Global_I2C[Name].i2c_addr.led_Sett.PWM = 0xff;
+	settings.Global_I2C[Name].i2c_addr.led_Sett.PWM_out = 0xff;
+
+	//mem_spi.Write(settings);
+
+
+
+	return ret;
 }
 /* USER CODE END 4 */
 

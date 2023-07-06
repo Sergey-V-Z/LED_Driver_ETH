@@ -37,6 +37,8 @@ extern "C" {
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
 
+
+
 typedef enum {
 	LED_DRV,
 	RELE,
@@ -76,6 +78,8 @@ typedef struct
 {
 
 	I2C_t 		i2c_addr;
+	uint32_t	ERR_counter;
+	uint32_t	last_ERR;
 	uint8_t		Channel_number;	// номер канала в пределах одного i2c
 	PCBType 	TypePCB;		// тип платы считывается с самой платы (группы)
 
@@ -113,6 +117,10 @@ typedef struct
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
 #define ID_STRING " Controll LED ETH ver1 05.06.23"
+
+#define START_ADR_I2C 16
+#define MAX_ADR_I2C 15
+#define MAX_CH_NAME 45
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
