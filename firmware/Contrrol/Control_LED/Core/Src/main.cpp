@@ -240,18 +240,7 @@ int main(void)
 
 		settings.version = 10;
 
-		// Clear
-		for (int var = 0; var < 45; ++var) {
-			del_i2c_dev(var);
-		}
-		// Write default
-		uint8_t name_num = 0;
-		for (int var = 0; var < MAX_ADR_I2C; ++var) {
-			for (int ch = 0; ch < 3; ++ch) {
-				set_i2c_dev(START_ADR_I2C + var, ch, name_num);
-				++name_num;
-			}
-		}
+		setRange_i2c_dev(16, 8);
 
 		mem_spi.Write(settings);
 
@@ -490,6 +479,22 @@ int del_i2c_dev(uint8_t Name){
 
 
 	return ret;
+}
+
+void setRange_i2c_dev(uint8_t startAddres, uint8_t quantity){
+	// Clear all
+	for (int var = 0; var <= 44; ++var) {
+		del_i2c_dev(var);
+	}
+
+	uint8_t name_num = 0;
+	for (int var = 0; var < quantity; ++var) {
+		for (int ch = 0; ch < 3; ++ch) {
+			set_i2c_dev(START_ADR_I2C + var, ch, name_num);
+			++name_num;
+		}
+	}
+
 }
 /* USER CODE END 4 */
 

@@ -198,7 +198,19 @@ string Сommand_execution(string in_str){
 		for (int i = 0; i < count_cmd; ++i) {
 
 			switch (arr_cmd[i].cmd) {
-			case 1: // Add dev in cell
+			case 1: // Delet dev
+				if(arr_cmd[i].data_in1){
+					arr_cmd[i].err = "not available";
+				}else{
+					setRange_i2c_dev(arr_cmd[i].addres_var, arr_cmd[i].data_in);
+					mem_spi.W25qxx_EraseSector(0);
+					osDelay(5);
+					mem_spi.Write(settings);
+					arr_cmd[i].err = "OK";
+				}
+
+				break;
+			case 2: // Add dev in cell
 				ret = set_i2c_dev(arr_cmd[i].addres_var, arr_cmd[i].data_in, arr_cmd[i].data_in1);
 				switch (ret) {
 				case 1:
@@ -223,70 +235,70 @@ string Сommand_execution(string in_str){
 				}
 
 				break;
-			case 2: // Delet dev
+			case 3: // Delet dev
 				del_i2c_dev(arr_cmd[i].data_in1);
 				arr_cmd[i].err = "OK";
 				break;
-			case 3: // Chanel on/off
+			case 4: // Chanel on/off
 				settings.Global_I2C[arr_cmd[i].data_in1].i2c_addr.led_Sett.On_off = arr_cmd[i].data_in;
 				arr_cmd[i].err = "OK";
 				break;
-			case 4: // PWM Chanel
+			case 5: // PWM Chanel
 				settings.Global_I2C[arr_cmd[i].data_in1].i2c_addr.led_Sett.PWM_out = arr_cmd[i].data_in;
 				arr_cmd[i].err = "OK";
 				break;
-			case 5: // PWM read
+			case 6: // PWM read
 				arr_cmd[i].data_out =  settings.Global_I2C[arr_cmd[i].data_in1].i2c_addr.led_Sett.PWM;
 				arr_cmd[i].need_resp = true;
 				arr_cmd[i].err = "OK";
 				break;
-			case 6:// Curent
+			case 7:// Curent
 				arr_cmd[i].data_out =  settings.Global_I2C[arr_cmd[i].data_in1].i2c_addr.led_Sett.Current;
 				arr_cmd[i].need_resp = true;
 				arr_cmd[i].err = "OK";
 				break;
-			case 7:// is on
+			case 8:// is on
 				arr_cmd[i].data_out =  settings.Global_I2C[arr_cmd[i].data_in1].i2c_addr.led_Sett.IsOn;
 				arr_cmd[i].need_resp = true;
 				arr_cmd[i].err = "OK";
 				break;
-			case 8: // save
+			case 9: // save
 				mem_spi.W25qxx_EraseSector(0);
 				osDelay(5);
 				mem_spi.Write(settings);
 				arr_cmd[i].err = "OK";
 				break;
-			case 9:// load in flash
+			case 10:// load in flash
 				settings.IP_end_from_settings = (uint8_t)arr_cmd[i].data_in;
 				arr_cmd[i].err = "OK";
 				break;
-			case 10: // Reboot
+			case 11: // Reboot
 				if(arr_cmd[i].data_in){
 					NVIC_SystemReset();
 				}
 				arr_cmd[i].err = "OK";
 				break;
-			case 11: // DHCP
+			case 12: // DHCP
 				settings.DHCPset = (uint8_t)arr_cmd[i].data_in;
 				arr_cmd[i].err = "OK";
 				break;
-			case 12: // IP
+			case 13: // IP
 				settings.saveIP.ip[arr_cmd[i].addres_var] = arr_cmd[i].data_in;
 				arr_cmd[i].err = "OK";
 				break;
-			case 13: // MASK
+			case 14: // MASK
 				settings.saveIP.mask[arr_cmd[i].addres_var] = arr_cmd[i].data_in;
 				arr_cmd[i].err = "OK";
 				break;
-			case 14: // GW
+			case 15: // GW
 				settings.saveIP.gateway[arr_cmd[i].addres_var] = arr_cmd[i].data_in;
 				arr_cmd[i].err = "OK";
 				break;
-			case 15: // MAC
+			case 16: // MAC
 				settings.MAC[arr_cmd[i].addres_var] = arr_cmd[i].data_in;
 				arr_cmd[i].err = "OK";
 				break;
-			case 16:// errors
+			case 17:// errors
 				if(arr_cmd[i].addres_var){
 					arr_cmd[i].data_out = settings.Global_I2C[arr_cmd[i].data_in1].ERR_counter;
 					settings.Global_I2C[arr_cmd[i].data_in1].ERR_counter = 0;

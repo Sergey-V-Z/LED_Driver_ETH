@@ -129,6 +129,7 @@ void Error_Handler(void);
 /* USER CODE BEGIN EFP */
 int set_i2c_dev(uint8_t Addr, uint8_t CH, uint8_t Name);
 int del_i2c_dev(uint8_t Name);
+void setRange_i2c_dev(uint8_t startAddres, uint8_t quantity);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
