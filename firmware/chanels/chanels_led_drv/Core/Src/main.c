@@ -26,11 +26,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#define COUNTOF(__BUFFER__)   (sizeof(__BUFFER__) / sizeof(*(__BUFFER__)))
-/* Size of Transmission buffer */
-#define TXBUFFERSIZE                      (COUNTOF(aTxBuffer))
-/* Size of Reception buffer */
-#define RXBUFFERSIZE                      (COUNTOF(aRxBuffer))
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -52,6 +48,12 @@ uint8_t aTxBuffer[21] = {0};
 uint8_t aRxBuffer[15] = {0};
 
 uint16_t adc_buffer[ln_ch*2] = {0};
+
+#define COUNTOF(__BUFFER__)   (sizeof(__BUFFER__) / sizeof(*(__BUFFER__)))
+/* Size of Transmission buffer */
+uint16_t TXBUFFERSIZE = (COUNTOF(aTxBuffer));
+/* Size of Reception buffer */
+uint16_t RXBUFFERSIZE = (COUNTOF(aRxBuffer));
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -66,7 +68,7 @@ uint8_t rxEnd = 1;
 volatile uint32_t OwnAddr = 0;
 uint8_t en1 = 0, en2 = 0, en3 = 0;
 uint8_t adc_Flag = 0;
-uint16_t PWM1 = 0, PWM2 = 0, PWM3 = 0;
+uint32_t PWM1 = 0, PWM2 = 0, PWM3 = 0;
 
 /* USER CODE END PV */
 
@@ -188,14 +190,14 @@ int main(void)
 		else LL_GPIO_ResetOutputPin(EN3_GPIO_Port, EN3_Pin);
 		*/
 
-		if(en1) htim3.Instance->CCR1 = PWM1;
-		else htim3.Instance->CCR1 = 0;
+		if(en1) htim3.Instance->CCR4 = PWM1;
+		else htim3.Instance->CCR4 = 0;
 
 		if(en2) htim3.Instance->CCR2 = PWM2;
 		else htim3.Instance->CCR2 = 0;
 
-		if(en3) htim3.Instance->CCR4 = PWM3;
-		else htim3.Instance->CCR4 = 0;
+		if(en3) htim3.Instance->CCR1 = PWM3;
+		else htim3.Instance->CCR1 = 0;
 
 		if (adc_Flag){
 			//обработка
@@ -203,14 +205,14 @@ int main(void)
 			// Запретить прерывания IRQ
 			//__disable_irq ();
 
-			aTxBuffer[4] = adc_buffer[0]&0xFF;
-			aTxBuffer[5] = (adc_buffer[0]>>8)&0xFF;
+			aTxBuffer[4] = adc_buffer[2]&0xFF;
+			aTxBuffer[5] = (adc_buffer[2]>>8)&0xFF;
 
 			aTxBuffer[11] = adc_buffer[1]&0xFF;
 			aTxBuffer[12] = (adc_buffer[1]>>8)&0xFF;
 
-			aTxBuffer[18] = adc_buffer[2]&0xFF;
-			aTxBuffer[19] = (adc_buffer[2]>>8)&0xFF;
+			aTxBuffer[18] = adc_buffer[0]&0xFF;
+			aTxBuffer[19] = (adc_buffer[0]>>8)&0xFF;
 
 			// Разрешить прерывания IRQ
 			//__enable_irq ();
@@ -303,10 +305,10 @@ void HAL_I2C_SlaveTxCpltCallback(I2C_HandleTypeDef *I2cHandle)
 	aTxBuffer[2]++;
 	aTxBuffer[3]++;
 	 */
-	aTxBuffer[0] = htim3.Instance->CCR1 & 0xFF;
-	aTxBuffer[1] = (htim3.Instance->CCR1 >> 8) & 0xFF;
-	aTxBuffer[2] = (htim3.Instance->CCR1 >> 16) & 0xFF;
-	aTxBuffer[3] = (htim3.Instance->CCR1 >> 24) & 0xFF;
+	aTxBuffer[0] = htim3.Instance->CCR4 & 0xFF;
+	aTxBuffer[1] = (htim3.Instance->CCR4 >> 8) & 0xFF;
+	aTxBuffer[2] = (htim3.Instance->CCR4 >> 16) & 0xFF;
+	aTxBuffer[3] = (htim3.Instance->CCR4 >> 24) & 0xFF;
 	aTxBuffer[6] = en1;
 
 	aTxBuffer[7] = htim3.Instance->CCR2 & 0xFF;
@@ -315,10 +317,10 @@ void HAL_I2C_SlaveTxCpltCallback(I2C_HandleTypeDef *I2cHandle)
 	aTxBuffer[10] = (htim3.Instance->CCR2 >> 24) & 0xFF;
 	aTxBuffer[13] = en2;
 
-	aTxBuffer[14] = htim3.Instance->CCR4 & 0xFF;
-	aTxBuffer[15] = (htim3.Instance->CCR4 >> 8) & 0xFF;
-	aTxBuffer[16] = (htim3.Instance->CCR4 >> 16) & 0xFF;
-	aTxBuffer[17] = (htim3.Instance->CCR4 >> 24) & 0xFF;
+	aTxBuffer[14] = htim3.Instance->CCR1 & 0xFF;
+	aTxBuffer[15] = (htim3.Instance->CCR1 >> 8) & 0xFF;
+	aTxBuffer[16] = (htim3.Instance->CCR1 >> 16) & 0xFF;
+	aTxBuffer[17] = (htim3.Instance->CCR1 >> 24) & 0xFF;
 	aTxBuffer[20] = en3;
 
 }

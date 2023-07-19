@@ -18,6 +18,7 @@ using namespace std;
 
 /*variables ---------------------------------------------------------*/
 extern settings_t settings;
+extern chName_t NameCH[MAX_CH_NAME];
 extern I2C_HandleTypeDef hi2c1;
 extern flash mem_spi;
 //структуры для netcon
@@ -199,14 +200,19 @@ string Сommand_execution(string in_str){
 
 			switch (arr_cmd[i].cmd) {
 			case 1: // Delet dev
-				if(arr_cmd[i].data_in1){
-					arr_cmd[i].err = "not available";
-				}else{
+				if(arr_cmd[i].data_in1 == 0){
 					setRange_i2c_dev(arr_cmd[i].addres_var, arr_cmd[i].data_in);
 					mem_spi.W25qxx_EraseSector(0);
 					osDelay(5);
 					mem_spi.Write(settings);
 					arr_cmd[i].err = "OK";
+				}else if(arr_cmd[i].data_in1 == 1){
+					arr_cmd[i].err = "not available";
+				}else if(arr_cmd[i].data_in1 == 2){
+					cleanAll_i2c_dev();
+					arr_cmd[i].err = "OK";
+				}else{
+					arr_cmd[i].err = "bead param";
 				}
 
 				break;
@@ -235,85 +241,115 @@ string Сommand_execution(string in_str){
 				}
 
 				break;
-			case 3: // Delet dev
-				del_i2c_dev(arr_cmd[i].data_in1);
-				arr_cmd[i].err = "OK";
-				break;
-			case 4: // Chanel on/off
-				settings.Global_I2C[arr_cmd[i].data_in1].i2c_addr.led_Sett.On_off = arr_cmd[i].data_in;
-				arr_cmd[i].err = "OK";
-				break;
-			case 5: // PWM Chanel
-				settings.Global_I2C[arr_cmd[i].data_in1].i2c_addr.led_Sett.PWM_out = arr_cmd[i].data_in;
-				arr_cmd[i].err = "OK";
-				break;
-			case 6: // PWM read
-				arr_cmd[i].data_out =  settings.Global_I2C[arr_cmd[i].data_in1].i2c_addr.led_Sett.PWM;
-				arr_cmd[i].need_resp = true;
-				arr_cmd[i].err = "OK";
-				break;
-			case 7:// Curent
-				arr_cmd[i].data_out =  settings.Global_I2C[arr_cmd[i].data_in1].i2c_addr.led_Sett.Current;
-				arr_cmd[i].need_resp = true;
-				arr_cmd[i].err = "OK";
-				break;
-			case 8:// is on
-				arr_cmd[i].data_out =  settings.Global_I2C[arr_cmd[i].data_in1].i2c_addr.led_Sett.IsOn;
-				arr_cmd[i].need_resp = true;
-				arr_cmd[i].err = "OK";
-				break;
-			case 9: // save
-				mem_spi.W25qxx_EraseSector(0);
-				osDelay(5);
-				mem_spi.Write(settings);
-				arr_cmd[i].err = "OK";
-				break;
-			case 10:// load in flash
-				settings.IP_end_from_settings = (uint8_t)arr_cmd[i].data_in;
-				arr_cmd[i].err = "OK";
-				break;
-			case 11: // Reboot
-				if(arr_cmd[i].data_in){
-					NVIC_SystemReset();
-				}
-				arr_cmd[i].err = "OK";
-				break;
-			case 12: // DHCP
-				settings.DHCPset = (uint8_t)arr_cmd[i].data_in;
-				arr_cmd[i].err = "OK";
-				break;
-			case 13: // IP
-				settings.saveIP.ip[arr_cmd[i].addres_var] = arr_cmd[i].data_in;
-				arr_cmd[i].err = "OK";
-				break;
-			case 14: // MASK
-				settings.saveIP.mask[arr_cmd[i].addres_var] = arr_cmd[i].data_in;
-				arr_cmd[i].err = "OK";
-				break;
-			case 15: // GW
-				settings.saveIP.gateway[arr_cmd[i].addres_var] = arr_cmd[i].data_in;
-				arr_cmd[i].err = "OK";
-				break;
-			case 16: // MAC
-				settings.MAC[arr_cmd[i].addres_var] = arr_cmd[i].data_in;
-				arr_cmd[i].err = "OK";
-				break;
-			case 17:// errors
-				if(arr_cmd[i].addres_var){
-					arr_cmd[i].data_out = settings.Global_I2C[arr_cmd[i].data_in1].ERR_counter;
-					settings.Global_I2C[arr_cmd[i].data_in1].ERR_counter = 0;
-				}else{
-					arr_cmd[i].data_out = settings.Global_I2C[arr_cmd[i].data_in1].last_ERR;
-					settings.Global_I2C[arr_cmd[i].data_in1].last_ERR = 0;
-				}
+				case 3: // Delet dev
+					del_i2c_dev(arr_cmd[i].data_in1);
+					arr_cmd[i].err = "OK";
+					break;
+				case 4: // Chanel on/off
+					if(NameCH[arr_cmd[i].data_in1].dev != NULL){
+						uint8_t c = NameCH[arr_cmd[i].data_in1].Channel_number; // get channel number for this name
+						NameCH[arr_cmd[i].data_in1].dev->ch[c].On_off = arr_cmd[i].data_in;
+						arr_cmd[i].err = "OK";
+					}else{
+						arr_cmd[i].err = "NULL ptr dev";
+					}
+					break;
+				case 5: // PWM set to Channel
+					if(NameCH[arr_cmd[i].data_in1].dev != NULL){
+						uint8_t c = NameCH[arr_cmd[i].data_in1].Channel_number; // get channel number for this name
+						NameCH[arr_cmd[i].data_in1].dev->ch[c].PWM_out = arr_cmd[i].data_in;
+						arr_cmd[i].err = "OK";
+					}else{
+						arr_cmd[i].err = "NULL ptr dev";
+					}
+					break;
+				case 6: // PWM read from channel
+					if(NameCH[arr_cmd[i].data_in1].dev != NULL){
+						uint8_t c = NameCH[arr_cmd[i].data_in1].Channel_number; // get channel number for this name
+						arr_cmd[i].data_out =  NameCH[arr_cmd[i].data_in1].dev->ch[c].PWM;
+						arr_cmd[i].need_resp = true;
+						arr_cmd[i].err = "OK";
+					}else{
+						arr_cmd[i].err = "NULL ptr dev";
+					}
 
-				arr_cmd[i].need_resp = true;
-				arr_cmd[i].err = "OK";
-				break;
-			default:
-				arr_cmd[i].err = "Command does not exist";
-				arr_cmd[i].f_bool = true;
-				break;
+					break;
+				case 7:// Curent read from channel
+					if(NameCH[arr_cmd[i].data_in1].dev != NULL){
+						uint8_t c = NameCH[arr_cmd[i].data_in1].Channel_number; // get channel number for this name
+						arr_cmd[i].data_out =  NameCH[arr_cmd[i].data_in1].dev->ch[c].Current;
+						arr_cmd[i].need_resp = true;
+						arr_cmd[i].err = "OK";
+					}else{
+						arr_cmd[i].err = "NULL ptr dev";
+					}
+
+					break;
+				case 8:// is on
+					if(NameCH[arr_cmd[i].data_in1].dev != NULL){
+						uint8_t c = NameCH[arr_cmd[i].data_in1].Channel_number; // get channel number for this name
+						arr_cmd[i].data_out =  NameCH[arr_cmd[i].data_in1].dev->ch[c].IsOn;
+						arr_cmd[i].need_resp = true;
+						arr_cmd[i].err = "OK";
+					}else{
+						arr_cmd[i].err = "NULL ptr dev";
+					}
+					break;
+				case 9: // save
+					mem_spi.W25qxx_EraseSector(0);
+					osDelay(5);
+					mem_spi.Write(settings);
+					arr_cmd[i].err = "OK";
+					break;
+				case 10:// load from flash
+					settings.IP_end_from_settings = (uint8_t)arr_cmd[i].data_in;
+					arr_cmd[i].err = "OK";
+					break;
+				case 11: // Reboot
+					if(arr_cmd[i].data_in){
+						NVIC_SystemReset();
+					}
+					arr_cmd[i].err = "OK";
+					break;
+				case 12: // DHCP
+					settings.DHCPset = (uint8_t)arr_cmd[i].data_in;
+					arr_cmd[i].err = "OK";
+					break;
+				case 13: // IP
+					settings.saveIP.ip[arr_cmd[i].addres_var] = arr_cmd[i].data_in;
+					arr_cmd[i].err = "OK";
+					break;
+				case 14: // MASK
+					settings.saveIP.mask[arr_cmd[i].addres_var] = arr_cmd[i].data_in;
+					arr_cmd[i].err = "OK";
+					break;
+				case 15: // GW
+					settings.saveIP.gateway[arr_cmd[i].addres_var] = arr_cmd[i].data_in;
+					arr_cmd[i].err = "OK";
+					break;
+				case 16: // MAC
+					settings.MAC[arr_cmd[i].addres_var] = arr_cmd[i].data_in;
+					arr_cmd[i].err = "OK";
+					break;
+				case 17:// errors
+					if(NameCH[arr_cmd[i].data_in1].dev != NULL){
+						if(arr_cmd[i].addres_var){
+							arr_cmd[i].data_out = NameCH[arr_cmd[i].data_in1].dev->ERR_counter;
+							NameCH[arr_cmd[i].data_in1].dev->ERR_counter = 0;
+						}else{
+							arr_cmd[i].data_out = NameCH[arr_cmd[i].data_in1].dev->last_ERR;
+							NameCH[arr_cmd[i].data_in1].dev->last_ERR = 0;
+						}
+						arr_cmd[i].need_resp = true;
+						arr_cmd[i].err = "OK";
+					}else{
+						arr_cmd[i].err = "NULL ptr dev";
+					}
+					break;
+				default:
+					arr_cmd[i].err = "Command does not exist";
+					arr_cmd[i].f_bool = true;
+					break;
 			}
 		}
 	}

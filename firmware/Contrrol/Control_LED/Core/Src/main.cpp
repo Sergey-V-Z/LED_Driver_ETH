@@ -49,6 +49,7 @@
 
 /* USER CODE BEGIN PV */
 settings_t settings = {0, 0x0E};
+chName_t NameCH[MAX_CH_NAME];
 
 uint32_t count_tic = 0; //для замеров времени выполнения кода
 
@@ -155,7 +156,7 @@ int main(void)
 		HAL_Delay(300);
 		HAL_GPIO_WritePin(R_GPIO_Port, R_Pin, GPIO_PIN_RESET); // PC13 VD2
 
-		// ждем снялия джампера или таймаута
+		// ждем снятия джампера или таймаута
 		int time;
 		bool Settings;
 		for (time = 0; time < 600; ++time) {
@@ -214,7 +215,7 @@ int main(void)
 		settings.isON_from_settings = false;
 		settings.IP_end_from_settings = 1;
 
-		settings.DHCPset = false;
+		settings.DHCPset = true;
 
 		settings.saveIP.ip[0] = 192;
 		settings.saveIP.ip[1] = 168;
@@ -238,9 +239,9 @@ int main(void)
 		settings.MAC[4] = 0x44;
 		settings.MAC[5] = endMAC;
 
-		settings.version = 10;
+		settings.version = 12;
 
-		setRange_i2c_dev(16, 8);
+		//setRange_i2c_dev(16, 8);
 
 		mem_spi.Write(settings);
 
@@ -256,6 +257,24 @@ int main(void)
 
 		//иначе выключаем все канналы
 
+	}
+
+	// reset link
+	for (int var = 0; var <= MAX_CH_NAME; ++var) {
+		NameCH[var].dev = NULL;
+		NameCH[var].Channel_number = 0xff;
+	}
+
+	// linking the channel name with the device and channel number
+	for (int var = 0; var <= MAX_ADR_I2C; ++var) {
+		// check device address
+		if((settings.devices[var].I2C_addr >= START_ADR_I2C) &&
+				(settings.devices[var].I2C_addr <= (START_ADR_I2C + MAX_ADR_I2C))){
+			for (int i = 0; i < 3; ++i) {
+				NameCH[settings.devices[var].ch[i].Name_ch].dev = &settings.devices[var];
+				NameCH[settings.devices[var].ch[i].Name_ch].Channel_number = i;
+			}
+		}
 	}
 
 
@@ -407,12 +426,13 @@ void timoutBlink(){
  * Name	- глобальное имя от 1 до 45
  */
 int set_i2c_dev(uint8_t Addr, uint8_t CH, uint8_t Name){
-	uint8_t ret = 0;
+	uint8_t ret = 0, dev = (Addr - START_ADR_I2C);
+
 	// проверка входных данных
 	if(CH > 2){
 		return 1;
 	}
-	if((Name > 44)){
+	if((Name > MAX_CH_NAME)){
 		return 2;
 	}
 	//если вышли за диапазон
@@ -420,27 +440,22 @@ int set_i2c_dev(uint8_t Addr, uint8_t CH, uint8_t Name){
 		return 3;
 	}
 
-	// если в ячейке записанно число которое входит в диапазон
-	if ((settings.Global_I2C[Name].i2c_addr.I2C_addr >= START_ADR_I2C) &&
-			(settings.Global_I2C[Name].i2c_addr.I2C_addr <= (START_ADR_I2C + MAX_ADR_I2C))) {
-		if(settings.Global_I2C[Name].i2c_addr.led_Sett.Name_ch < 44){
-			return 4;
-		}
-	}
-
 	//mem_spi.W25qxx_EraseSector(0);
-	// записываем данные в память и сохраняем на флешку
-	settings.Global_I2C[Name].i2c_addr.I2C_addr = Addr;
-	settings.Global_I2C[Name].Channel_number = CH;
-	settings.Global_I2C[Name].i2c_addr.led_Sett.Name_ch = Name;
-	settings.Global_I2C[Name].ERR_counter = 0;
-	settings.Global_I2C[Name].last_ERR = 0;
+	NameCH[Name].dev = &settings.devices[dev];
+	NameCH[Name].Channel_number = CH;
 
-	settings.Global_I2C[Name].i2c_addr.led_Sett.Current = 0;
-	settings.Global_I2C[Name].i2c_addr.led_Sett.IsOn = 0;
-	settings.Global_I2C[Name].i2c_addr.led_Sett.On_off = 0;
-	settings.Global_I2C[Name].i2c_addr.led_Sett.PWM = 0;
-	settings.Global_I2C[Name].i2c_addr.led_Sett.PWM_out = 0;
+	// записываем данные в память и сохраняем на флешку
+	settings.devices[dev].I2C_addr = Addr;
+	settings.devices[dev].ch[CH].Name_ch = Name;
+	settings.devices[dev].ERR_counter = 0;
+	settings.devices[dev].last_ERR = 0;
+	settings.devices[dev].TypePCB = PCBType::NoInit ;
+
+	settings.devices[dev].ch[CH].Current = 0;
+	settings.devices[dev].ch[CH].IsOn = 0;
+	settings.devices[dev].ch[CH].On_off = 0;
+	settings.devices[dev].ch[CH].PWM = 0;
+	settings.devices[dev].ch[CH].PWM_out = 0;
 	//mem_spi.Write(settings);
 
 	return ret;
@@ -461,19 +476,24 @@ int del_i2c_dev(uint8_t Name){
 
 	//mem_spi.W25qxx_EraseSector(0);
 	// записываем данные в память и сохраняем на флешку
-	settings.Global_I2C[Name].i2c_addr.I2C_addr = 0xff;
-	settings.Global_I2C[Name].Channel_number = 0xff;
-	settings.Global_I2C[Name].TypePCB = NoInit;
-	settings.Global_I2C[Name].ERR_counter = 0xffffffff;
-	settings.Global_I2C[Name].last_ERR = 0xffffffff;
+	//NameCH[Name].dev = &settings.devices[dev];
+	uint8_t CH = NameCH[Name].Channel_number;
 
-	settings.Global_I2C[Name].i2c_addr.led_Sett.Name_ch = 0xff;
-	settings.Global_I2C[Name].i2c_addr.led_Sett.Current = 0xff;
-	settings.Global_I2C[Name].i2c_addr.led_Sett.IsOn = 0xff;
-	settings.Global_I2C[Name].i2c_addr.led_Sett.On_off = 0xff;
-	settings.Global_I2C[Name].i2c_addr.led_Sett.PWM = 0xff;
-	settings.Global_I2C[Name].i2c_addr.led_Sett.PWM_out = 0xff;
+	// записываем данные в память и сохраняем на флешку
+	NameCH[Name].dev->I2C_addr = 0xff;
+	NameCH[Name].dev->ch[CH].Name_ch = 0xff;
+	NameCH[Name].dev->ERR_counter = 0xffffffff;
+	NameCH[Name].dev->last_ERR = 0xffffffff;
+	NameCH[Name].dev->TypePCB = PCBType::NoInit;
 
+	NameCH[Name].dev->ch[CH].Current = 0xffff;
+	NameCH[Name].dev->ch[CH].IsOn = 0xff;
+	NameCH[Name].dev->ch[CH].On_off = 0xff;
+	NameCH[Name].dev->ch[CH].PWM = 0xffffffff;
+	NameCH[Name].dev->ch[CH].PWM_out = 0xffffffff;
+
+	NameCH[Name].dev = NULL;
+	NameCH[Name].Channel_number = 0xff;
 	//mem_spi.Write(settings);
 
 
@@ -483,16 +503,21 @@ int del_i2c_dev(uint8_t Name){
 
 void setRange_i2c_dev(uint8_t startAddres, uint8_t quantity){
 	// Clear all
-	for (int var = 0; var <= 44; ++var) {
-		del_i2c_dev(var);
-	}
+	cleanAll_i2c_dev();
 
 	uint8_t name_num = 0;
 	for (int var = 0; var < quantity; ++var) {
 		for (int ch = 0; ch < 3; ++ch) {
-			set_i2c_dev(START_ADR_I2C + var, ch, name_num);
+			set_i2c_dev(startAddres + var, ch, name_num);
 			++name_num;
 		}
+	}
+}
+
+void cleanAll_i2c_dev(){
+	// Clear all
+	for (int var = 0; var <= MAX_CH_NAME; ++var) {
+		del_i2c_dev(var);
 	}
 
 }
