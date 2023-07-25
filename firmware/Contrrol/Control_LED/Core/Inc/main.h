@@ -48,9 +48,9 @@ extern "C" {
 /* USER CODE BEGIN EM */
 #define ID_STRING " Controll LED ETH ver1.2 11.07.23"
 
-#define START_ADR_I2C 16
-#define MAX_ADR_I2C 16 // 16 with 0
-#define MAX_CH_NAME MAX_ADR_I2C * 3 // 48
+#define START_ADR_I2C 1
+#define MAX_ADR_DEV 16 // 16 with 0
+#define MAX_CH_NAME MAX_ADR_DEV * 3 // 48
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
@@ -58,9 +58,13 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
 int set_i2c_dev(uint8_t Addr, uint8_t CH, uint8_t Name);
-int del_i2c_dev(uint8_t Name);
+int del_Name_dev(uint8_t Name);
+void del_all_dev();
 void setRange_i2c_dev(uint8_t startAddres, uint8_t quantity);
 void cleanAll_i2c_dev();
+uint8_t ReadStraps();
+void finishedBlink();
+void timoutBlink();
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
@@ -99,9 +103,9 @@ void cleanAll_i2c_dev();
 
 /* USER CODE BEGIN Private defines */
 typedef enum {
-	LED_DRV,
-	RELE,
-	NoInit,
+	NoInit = 0,
+	LED_DRV = 10,
+	RELE = 20,
 }PCBType;
 
 typedef struct
@@ -117,7 +121,8 @@ typedef struct
 typedef struct
 {
 	chanel 		ch[3];
-	uint8_t 	I2C_addr;		// адрес I2C  на котором рассположен канналы
+	uint8_t 	Addr;		// адрес на котором рассположен канналы
+	uint8_t 	AddrFromDev;
 	uint32_t	ERR_counter;
 	uint32_t	last_ERR;
 	PCBType 	TypePCB;		// тип платы считывается с самой платы (группы)
@@ -138,7 +143,7 @@ typedef struct
 
 typedef struct
 {
-	DEV_t devices[MAX_ADR_I2C];
+	DEV_t devices[MAX_ADR_DEV];
 	uint8_t	MAC[6];
 	uint8_t isON_from_settings;
 	uint8_t IP_end_from_settings;

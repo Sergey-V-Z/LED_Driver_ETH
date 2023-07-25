@@ -19,7 +19,7 @@ using namespace std;
 /*variables ---------------------------------------------------------*/
 extern settings_t settings;
 extern chName_t NameCH[MAX_CH_NAME];
-extern I2C_HandleTypeDef hi2c1;
+extern UART_HandleTypeDef huart1;
 extern flash mem_spi;
 //структуры для netcon
 extern struct netif gnetif;
@@ -242,7 +242,7 @@ string Сommand_execution(string in_str){
 
 				break;
 				case 3: // Delet dev
-					del_i2c_dev(arr_cmd[i].data_in1);
+					del_Name_dev(arr_cmd[i].data_in1);
 					arr_cmd[i].err = "OK";
 					break;
 				case 4: // Chanel on/off

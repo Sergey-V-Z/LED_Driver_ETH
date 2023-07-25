@@ -20,8 +20,8 @@
 #include "main.h"
 #include "adc.h"
 #include "dma.h"
-#include "i2c.h"
 #include "tim.h"
+#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -42,10 +42,10 @@ __IO uint32_t     Xfer_Complete = 0;
 extern ADC_HandleTypeDef hadc;
 extern TIM_HandleTypeDef htim3;
 /* Buffer used for transmission */
-uint8_t aTxBuffer[21] = {0};
+uint16_t aTxBuffer[24] = {0};
 
 /* Buffer used for reception */
-uint8_t aRxBuffer[15] = {0};
+uint16_t aRxBuffer[16] = {0};
 
 uint16_t adc_buffer[ln_ch*2] = {0};
 
@@ -126,7 +126,7 @@ int main(void)
 	{SET_BIT(OwnAddr,1<<3);}
 	else {CLEAR_BIT(OwnAddr,1<<3);}
 	//Bit4
-	SET_BIT(OwnAddr,1<<4);
+	//SET_BIT(OwnAddr,1<<4);
 
 	LL_GPIO_DeInit(A0_PWM_CH4_GPIO_Port);
 	LL_GPIO_DeInit(A1_PWM_CH2_GPIO_Port);
@@ -139,14 +139,9 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_ADC_Init();
-  MX_I2C1_Init();
   MX_TIM3_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-	if(HAL_I2C_EnableListen_IT(&hi2c1) != HAL_OK)
-	{
-		/* Transfer error in reception process */
-		Error_Handler();
-	}
 
 	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_2);
@@ -161,34 +156,29 @@ int main(void)
 	if(HAL_ADC_Start_DMA(&hadc, (uint32_t*)&adc_buffer, ln_ch) != HAL_OK){
 		Error_Handler();
 	}
+
+	HAL_MultiProcessor_EnableMuteMode(&huart1);
+	HAL_MultiProcessor_EnterMuteMode(&huart1);
+	HAL_UART_Receive_DMA(&huart1, (uint8_t*)aRxBuffer, 16);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	while (1)
 	{
-		if (Xfer_Complete ==1)
-		{
-			HAL_Delay(1);
-			/*##- Put I2C peripheral in listen mode process ###########################*/
-			if(HAL_I2C_EnableListen_IT(&hi2c1) != HAL_OK)
-			{
-				/* Transfer error in reception process */
-				Error_Handler();
+		if(rxEnd == 1){
+			rxEnd = 0;
+			PWM1 = aRxBuffer[1] |(aRxBuffer[2] << 8)|(aRxBuffer[3] << 16)|(aRxBuffer[4] << 24);
+			en1 = aRxBuffer[5];
+			PWM2 = aRxBuffer[6] |(aRxBuffer[7] << 8)|(aRxBuffer[8] << 16)|(aRxBuffer[9] << 24);
+			en2 = aRxBuffer[10];
+			PWM3 = aRxBuffer[11] |(aRxBuffer[11] << 8)|(aRxBuffer[13] << 16)|(aRxBuffer[14] << 24);
+			en3 = aRxBuffer[15];
+
+			for (int i = 0; i < RXBUFFERSIZE; ++i) {
+				aRxBuffer[i] = 0;
 			}
-			Xfer_Complete =0;
 		}
-
-		/*
-		if(en1) LL_GPIO_SetOutputPin(EN1_GPIO_Port, EN1_Pin);
-		else LL_GPIO_ResetOutputPin(EN1_GPIO_Port, EN1_Pin);
-
-		if(en2) LL_GPIO_SetOutputPin(EN2_GPIO_Port, EN2_Pin);
-		else LL_GPIO_ResetOutputPin(EN2_GPIO_Port, EN2_Pin);
-
-		if(en3) LL_GPIO_SetOutputPin(EN3_GPIO_Port, EN3_Pin);
-		else LL_GPIO_ResetOutputPin(EN3_GPIO_Port, EN3_Pin);
-		*/
 
 		if(en1) htim3.Instance->CCR4 = PWM1;
 		else htim3.Instance->CCR4 = 0;
@@ -199,11 +189,13 @@ int main(void)
 		if(en3) htim3.Instance->CCR1 = PWM3;
 		else htim3.Instance->CCR1 = 0;
 
+
+
 		if (adc_Flag){
 			//обработка
 
 			// Запретить прерывания IRQ
-			//__disable_irq ();
+			__disable_irq ();
 
 			aTxBuffer[4] = adc_buffer[2]&0xFF;
 			aTxBuffer[5] = (adc_buffer[2]>>8)&0xFF;
@@ -214,9 +206,30 @@ int main(void)
 			aTxBuffer[18] = adc_buffer[0]&0xFF;
 			aTxBuffer[19] = (adc_buffer[0]>>8)&0xFF;
 
-			// Разрешить прерывания IRQ
-			//__enable_irq ();
+			aTxBuffer[0] = htim3.Instance->CCR4 & 0xFF;
+			aTxBuffer[1] = (htim3.Instance->CCR4 >> 8) & 0xFF;
+			aTxBuffer[2] = (htim3.Instance->CCR4 >> 16) & 0xFF;
+			aTxBuffer[3] = (htim3.Instance->CCR4 >> 24) & 0xFF;
+			aTxBuffer[6] = en1;
 
+			aTxBuffer[7] = htim3.Instance->CCR2 & 0xFF;
+			aTxBuffer[8] = (htim3.Instance->CCR2 >> 8) & 0xFF;
+			aTxBuffer[9] = (htim3.Instance->CCR2 >> 16) & 0xFF;
+			aTxBuffer[10] = (htim3.Instance->CCR2 >> 24) & 0xFF;
+			aTxBuffer[13] = en2;
+
+			aTxBuffer[14] = htim3.Instance->CCR1 & 0xFF;
+			aTxBuffer[15] = (htim3.Instance->CCR1 >> 8) & 0xFF;
+			aTxBuffer[16] = (htim3.Instance->CCR1 >> 16) & 0xFF;
+			aTxBuffer[17] = (htim3.Instance->CCR1 >> 24) & 0xFF;
+			aTxBuffer[20] = en3;
+			aTxBuffer[21] = OwnAddr;
+			aTxBuffer[22] = 10; // Type
+			aTxBuffer[23] = 0;
+
+			// Разрешить прерывания IRQ
+			__enable_irq ();
+			HAL_Delay(1);
 			adc_Flag = 0;
 			if(HAL_ADC_Start_DMA(&hadc, (uint32_t*)&adc_buffer, ln_ch) != HAL_OK){
 				Error_Handler();
@@ -281,154 +294,53 @@ void SystemClock_Config(void)
     Error_Handler();
   }
   LL_RCC_HSI14_EnableADCControl();
-  LL_RCC_SetI2CClockSource(LL_RCC_I2C1_CLKSOURCE_HSI);
+  LL_RCC_SetUSARTClockSource(LL_RCC_USART1_CLKSOURCE_PCLK1);
 }
 
 /* USER CODE BEGIN 4 */
-/**
- * @brief  Tx Transfer completed callback.
- * @param  I2cHandle: I2C handle.
- * @note   This example shows a simple way to report end of IT Tx transfer, and
- *         you can add your own implementation.
- * @retval None
- */
-
-void HAL_I2C_SlaveTxCpltCallback(I2C_HandleTypeDef *I2cHandle)
-{
-	/* Toggle LED: Transfer in transmission process is correct */
-	LL_GPIO_TogglePin(A3_LED_GPIO_Port, A3_LED_Pin);
-
-	Xfer_Complete = 1;
-	/*
-	aTxBuffer[0]++;
-	aTxBuffer[1]++;
-	aTxBuffer[2]++;
-	aTxBuffer[3]++;
-	 */
-	aTxBuffer[0] = htim3.Instance->CCR4 & 0xFF;
-	aTxBuffer[1] = (htim3.Instance->CCR4 >> 8) & 0xFF;
-	aTxBuffer[2] = (htim3.Instance->CCR4 >> 16) & 0xFF;
-	aTxBuffer[3] = (htim3.Instance->CCR4 >> 24) & 0xFF;
-	aTxBuffer[6] = en1;
-
-	aTxBuffer[7] = htim3.Instance->CCR2 & 0xFF;
-	aTxBuffer[8] = (htim3.Instance->CCR2 >> 8) & 0xFF;
-	aTxBuffer[9] = (htim3.Instance->CCR2 >> 16) & 0xFF;
-	aTxBuffer[10] = (htim3.Instance->CCR2 >> 24) & 0xFF;
-	aTxBuffer[13] = en2;
-
-	aTxBuffer[14] = htim3.Instance->CCR1 & 0xFF;
-	aTxBuffer[15] = (htim3.Instance->CCR1 >> 8) & 0xFF;
-	aTxBuffer[16] = (htim3.Instance->CCR1 >> 16) & 0xFF;
-	aTxBuffer[17] = (htim3.Instance->CCR1 >> 24) & 0xFF;
-	aTxBuffer[20] = en3;
-
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart){
+	HAL_GPIO_TogglePin(A3_LED_GPIO_Port, A3_LED_Pin);
+	//HAL_UART_Receive_IT(huart, (uint8_t*)aRxBuffer, 15);
 }
 
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 
-/**
- * @brief  Rx Transfer completed callback.
- * @param  I2cHandle: I2C handle
- * @note   This example shows a simple way to report end of IT Rx transfer, and
- *         you can add your own implementation.
- * @retval None
- */
-void HAL_I2C_SlaveRxCpltCallback(I2C_HandleTypeDef *I2cHandle)
-{
-	/* Toggle LED: Transfer in reception process is correct */
-	LL_GPIO_TogglePin(A3_LED_GPIO_Port, A3_LED_Pin);
-
-	Xfer_Complete = 1;
-	/*
-	aRxBuffer[0]=0x00;
-	aRxBuffer[1]=0x00;
-	aRxBuffer[2]=0x00;
-	aRxBuffer[3]=0x00;
-	 */
-
-	PWM1 = aRxBuffer[0] |(aRxBuffer[1] << 8)|(aRxBuffer[2] << 16)|(aRxBuffer[3] << 24);
-	en1 = aRxBuffer[4];
-	PWM2 = aRxBuffer[5] |(aRxBuffer[6] << 8)|(aRxBuffer[7] << 16)|(aRxBuffer[8] << 24);
-	en2 = aRxBuffer[9];
-	PWM3 = aRxBuffer[10] |(aRxBuffer[11] << 8)|(aRxBuffer[12] << 16)|(aRxBuffer[13] << 24);
-	en3 = aRxBuffer[14];
-}
-
-
-
-/**
- * @brief  Slave Address Match callback.
- * @param  hi2c Pointer to a I2C_HandleTypeDef structure that contains
- *                the configuration information for the specified I2C.
- * @param  TransferDirection: Master request Transfer Direction (Write/Read), value of @ref I2C_XferOptions_definition
- * @param  AddrMatchCode: Address Match Code
- * @retval None
- */
-void HAL_I2C_AddrCallback(I2C_HandleTypeDef *hi2c, uint8_t TransferDirection, uint16_t AddrMatchCode)
-{
-	Transfer_Direction = TransferDirection;
-	if (Transfer_Direction != 0)
-	{
-		/*##- Start the transmission process #####################################*/
-		/* While the I2C in reception process, user can transmit data through
-     "aTxBuffer" buffer */
-		if (HAL_I2C_Slave_Seq_Transmit_IT(&hi2c1, (uint8_t *)aTxBuffer, TXBUFFERSIZE, I2C_FIRST_AND_LAST_FRAME) != HAL_OK)
-
-		{
-			/* Transfer error in transmission process */
-			Error_Handler();
-		}
-
-	}
-	else
-	{
-
-		/*##- Put I2C peripheral in reception process ###########################*/
-		if (HAL_I2C_Slave_Seq_Receive_IT(&hi2c1, (uint8_t *)aRxBuffer, RXBUFFERSIZE, I2C_FIRST_AND_LAST_FRAME) != HAL_OK)
-		{
-			/* Transfer error in reception process */
-			Error_Handler();
-		}
-
-	}
+	rxEnd = 1;
+	HAL_GPIO_TogglePin(A3_LED_GPIO_Port, A3_LED_Pin);
+	HAL_UART_Transmit_IT(huart, (uint8_t*)aTxBuffer, 24);
+	HAL_UART_Receive_DMA(&huart1, (uint8_t*)aRxBuffer, 16);
 
 }
-
-/**
- * @brief  Listen Complete callback.
- * @param  hi2c Pointer to a I2C_HandleTypeDef structure that contains
- *                the configuration information for the specified I2C.
- * @retval None
- */
-void HAL_I2C_ListenCpltCallback(I2C_HandleTypeDef *hi2c)
+void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 {
-}
+        if (huart == &huart1)
+        {
+                uint32_t er = HAL_UART_GetError(&huart1);
 
-/**
- * @brief  I2C error callbacks.
- * @param  I2cHandle: I2C handle
- * @note   This example shows a simple way to report transfer error, and you can
- *         add your own implementation.
- * @retval None
- */
-void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *I2cHandle)
-{
-	/** Error_Handler() function is called when error occurs.
-	 * 1- When Slave doesn't acknowledge its address, Master restarts communication.
-	 * 2- When Master doesn't acknowledge the last data transferred, Slave doesn't care in this example.
-	 */
-	if (HAL_I2C_GetError(I2cHandle) != HAL_I2C_ERROR_AF)
-	{
-		Error_Handler();
-	}
+                if (er & HAL_UART_ERROR_PE)
+                {
+                        __HAL_UART_CLEAR_PEFLAG(&huart1);
+                }
+                if (er & HAL_UART_ERROR_NE)
+                {
+                	__HAL_UART_CLEAR_NEFLAG(&huart1);
+                }
+                if (er & HAL_UART_ERROR_FE)
+                {
+                	__HAL_UART_CLEAR_FEFLAG(&huart1);
+                }
+                if (er & HAL_UART_ERROR_ORE)
+                {
+                	__HAL_UART_CLEAR_OREFLAG(&huart1);
+                }
+                if (er & HAL_UART_ERROR_DMA)
+                {
+                	__HAL_UART_CLEAR_NEFLAG(&huart1);
+                }
+                huart->ErrorCode = HAL_UART_ERROR_NONE;
+        }
 }
-
 /** Configure pins as
- * Analog
- * Input
- * Output
- * EVENT_OUT
- * EXTI
  */
 void IN_GPIO_Init(void)
 {

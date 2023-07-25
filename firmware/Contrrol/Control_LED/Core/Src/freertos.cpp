@@ -62,6 +62,7 @@ extern settings_t settings;
 extern chName_t NameCH[MAX_CH_NAME];
 uint16_t sensBuff[8] = {0};
 uint8_t sensState = 255; // битовое поле
+bool rx_end = 1;
 
 uint32_t freqSens = HAL_RCC_GetHCLKFreq()/30000u;
 uint32_t pwmSens;
@@ -69,8 +70,8 @@ uint32_t pwmSens;
 uint16_t adc_buffer[24] = {0};
 uint16_t adc_buffer2[24] = {0};
 
-uint8_t TX_buff[15]={0}; // i2c buff
-uint8_t RX_buff[21]={0}; // i2c buff
+uint16_t TX_buff[15]={0}; // buff
+uint16_t RX_buff[24]={0}; // buff
 
 extern led LED_IPadr;
 extern led LED_error;
@@ -85,12 +86,13 @@ string in_str;
 
 //переменные для обшей работы
 uint32_t Start = 0;
-extern I2C_HandleTypeDef hi2c1;
+extern UART_HandleTypeDef huart1;
 extern flash mem_spi;
 
 //переменные для тестов
 
 uint8_t txRedy = 1;
+
 
 /* USER CODE END Variables */
 osThreadId MainTaskHandle;
@@ -132,72 +134,72 @@ void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer, StackTy
 /* USER CODE END GET_IDLE_TASK_MEMORY */
 
 /**
-  * @brief  FreeRTOS initialization
-  * @param  None
-  * @retval None
-  */
+ * @brief  FreeRTOS initialization
+ * @param  None
+ * @retval None
+ */
 void MX_FREERTOS_Init(void) {
-  /* USER CODE BEGIN Init */
+	/* USER CODE BEGIN Init */
 
-  /* USER CODE END Init */
-  /* Create the mutex(es) */
-  /* definition and creation of s2DistanceMutex */
-  osMutexDef(s2DistanceMutex);
-  s2DistanceMutexHandle = osMutexCreate(osMutex(s2DistanceMutex));
+	/* USER CODE END Init */
+	/* Create the mutex(es) */
+	/* definition and creation of s2DistanceMutex */
+	osMutexDef(s2DistanceMutex);
+	s2DistanceMutexHandle = osMutexCreate(osMutex(s2DistanceMutex));
 
-  /* definition and creation of mutexADC */
-  osMutexDef(mutexADC);
-  mutexADCHandle = osMutexCreate(osMutex(mutexADC));
+	/* definition and creation of mutexADC */
+	osMutexDef(mutexADC);
+	mutexADCHandle = osMutexCreate(osMutex(mutexADC));
 
-  /* definition and creation of s1DistanceMutex */
-  osMutexDef(s1DistanceMutex);
-  s1DistanceMutexHandle = osMutexCreate(osMutex(s1DistanceMutex));
+	/* definition and creation of s1DistanceMutex */
+	osMutexDef(s1DistanceMutex);
+	s1DistanceMutexHandle = osMutexCreate(osMutex(s1DistanceMutex));
 
-  /* definition and creation of setMutex */
-  osMutexDef(setMutex);
-  setMutexHandle = osMutexCreate(osMutex(setMutex));
+	/* definition and creation of setMutex */
+	osMutexDef(setMutex);
+	setMutexHandle = osMutexCreate(osMutex(setMutex));
 
-  /* USER CODE BEGIN RTOS_MUTEX */
+	/* USER CODE BEGIN RTOS_MUTEX */
 	/* add mutexes, ... */
-  /* USER CODE END RTOS_MUTEX */
+	/* USER CODE END RTOS_MUTEX */
 
-  /* Create the semaphores(s) */
-  /* definition and creation of ADC_end */
-  osSemaphoreDef(ADC_end);
-  ADC_endHandle = osSemaphoreCreate(osSemaphore(ADC_end), 1);
+	/* Create the semaphores(s) */
+	/* definition and creation of ADC_end */
+	osSemaphoreDef(ADC_end);
+	ADC_endHandle = osSemaphoreCreate(osSemaphore(ADC_end), 1);
 
-  /* definition and creation of ADC_end2 */
-  osSemaphoreDef(ADC_end2);
-  ADC_end2Handle = osSemaphoreCreate(osSemaphore(ADC_end2), 1);
+	/* definition and creation of ADC_end2 */
+	osSemaphoreDef(ADC_end2);
+	ADC_end2Handle = osSemaphoreCreate(osSemaphore(ADC_end2), 1);
 
-  /* USER CODE BEGIN RTOS_SEMAPHORES */
+	/* USER CODE BEGIN RTOS_SEMAPHORES */
 	/* add semaphores, ... */
-  /* USER CODE END RTOS_SEMAPHORES */
+	/* USER CODE END RTOS_SEMAPHORES */
 
-  /* USER CODE BEGIN RTOS_TIMERS */
+	/* USER CODE BEGIN RTOS_TIMERS */
 	/* start timers, add new ones, ... */
-  /* USER CODE END RTOS_TIMERS */
+	/* USER CODE END RTOS_TIMERS */
 
-  /* USER CODE BEGIN RTOS_QUEUES */
+	/* USER CODE BEGIN RTOS_QUEUES */
 	/* add queues, ... */
-  /* USER CODE END RTOS_QUEUES */
+	/* USER CODE END RTOS_QUEUES */
 
-  /* Create the thread(s) */
-  /* definition and creation of MainTask */
-  osThreadDef(MainTask, mainTask, osPriorityNormal, 0, 256);
-  MainTaskHandle = osThreadCreate(osThread(MainTask), NULL);
+	/* Create the thread(s) */
+	/* definition and creation of MainTask */
+	osThreadDef(MainTask, mainTask, osPriorityNormal, 0, 256);
+	MainTaskHandle = osThreadCreate(osThread(MainTask), NULL);
 
-  /* definition and creation of LED */
-  osThreadDef(LED, led, osPriorityNormal, 0, 128);
-  LEDHandle = osThreadCreate(osThread(LED), NULL);
+	/* definition and creation of LED */
+	osThreadDef(LED, led, osPriorityNormal, 0, 128);
+	LEDHandle = osThreadCreate(osThread(LED), NULL);
 
-  /* definition and creation of ethTas */
-  osThreadDef(ethTas, eth_Task, osPriorityNormal, 0, 768);
-  ethTasHandle = osThreadCreate(osThread(ethTas), NULL);
+	/* definition and creation of ethTas */
+	osThreadDef(ethTas, eth_Task, osPriorityNormal, 0, 768);
+	ethTasHandle = osThreadCreate(osThread(ethTas), NULL);
 
-  /* USER CODE BEGIN RTOS_THREADS */
+	/* USER CODE BEGIN RTOS_THREADS */
 	/* add threads, ... */
-  /* USER CODE END RTOS_THREADS */
+	/* USER CODE END RTOS_THREADS */
 
 }
 
@@ -210,26 +212,57 @@ void MX_FREERTOS_Init(void) {
 /* USER CODE END Header_mainTask */
 void mainTask(void const * argument)
 {
-  /* init code for LWIP */
-  MX_LWIP_Init();
-  /* USER CODE BEGIN mainTask */
-
+	/* init code for LWIP */
+	MX_LWIP_Init();
+	/* USER CODE BEGIN mainTask */
 	HAL_StatusTypeDef status1;
-	uint8_t channelForName = 0;
-
+	//uint8_t channelForName = 0;
+	uint16_t Address = 0;
 	/* Infinite loop */
 	for(;;)
 	{
 
 		if(1){
-			txRedy = 0;
 
-			for (int var = 0; var < MAX_ADR_I2C; ++var) {
 
-				if((settings.devices[var].I2C_addr >= START_ADR_I2C) && (settings.devices[var].I2C_addr <= (START_ADR_I2C + MAX_ADR_I2C))){
-					// Read data
-					status1 = HAL_I2C_Master_Receive(&hi2c1, (uint16_t)settings.devices[var].I2C_addr << 1, RX_buff, 21, 100);
+			for (int var = 0; var < MAX_ADR_DEV; ++var) {
 
+				if((settings.devices[var].Addr >= START_ADR_I2C) && (settings.devices[var].Addr <= (START_ADR_I2C + MAX_ADR_DEV))){
+
+					for (int i = 0; i < 15; ++i) {
+						TX_buff[i] = 0;
+					}
+					//передаем данные в устройство
+					// ch0 *******************************************************
+
+					TX_buff[0] = settings.devices[var].ch[0].PWM_out & 0xFF;
+					TX_buff[1] = (settings.devices[var].ch[0].PWM_out >> 8) & 0xFF;
+					TX_buff[2] = (settings.devices[var].ch[0].PWM_out >> 16) & 0xFF;
+					TX_buff[3] = (settings.devices[var].ch[0].PWM_out >> 24) & 0xFF;
+
+					TX_buff[4] = settings.devices[var].ch[0].On_off;
+
+					// ch1 *******************************************************
+					TX_buff[5] = settings.devices[var].ch[1].PWM_out & 0xFF;
+					TX_buff[6] = (settings.devices[var].ch[1].PWM_out >> 8) & 0xFF;
+					TX_buff[7] = (settings.devices[var].ch[1].PWM_out >> 16) & 0xFF;
+					TX_buff[8] = (settings.devices[var].ch[1].PWM_out >> 24) & 0xFF;
+
+					TX_buff[9] = settings.devices[var].ch[1].On_off;
+
+					// ch2 *******************************************************
+					TX_buff[10] = settings.devices[var].ch[2].PWM_out & 0xFF;
+					TX_buff[11] = (settings.devices[var].ch[2].PWM_out >> 8) & 0xFF;
+					TX_buff[12] = (settings.devices[var].ch[2].PWM_out >> 16) & 0xFF;
+					TX_buff[13] = (settings.devices[var].ch[2].PWM_out >> 24) & 0xFF;
+
+					TX_buff[14] = settings.devices[var].ch[2].On_off;
+
+
+					status1 = HAL_UART_Receive_DMA(&huart1, (uint8_t*)RX_buff, 24);// Read data
+					Address =  settings.devices[var].Addr  | 0x0100;
+					status1 = HAL_UART_Transmit(&huart1, (uint8_t*)&Address, 1, 10);
+					status1 = HAL_UART_Transmit(&huart1, (uint8_t*)TX_buff, 15, 10);
 					if(status1 != HAL_OK){
 						settings.devices[var].ERR_counter ++;
 						settings.devices[var].last_ERR = status1;
@@ -240,79 +273,56 @@ void mainTask(void const * argument)
 						settings.devices[var].last_ERR = status1;
 						LED_error.LEDoff();
 					}
-					//буффер рассовываем по переменным (переделать в указатели)
 
-					// ch0 *******************************************************
+					for (int i = 0; i < 10; ++i) {
+						if(rx_end){
+							rx_end = 0;
+							//буффер рассовываем по переменным (переделать в указатели)
 
-					settings.devices[var].ch[0].PWM =
-							RX_buff[0] | (RX_buff[1] << 8) | (RX_buff[2] << 16) | (RX_buff[3] << 24);
+							// ch0 *******************************************************
 
-					settings.devices[var].ch[0].Current = RX_buff[4] | (RX_buff[5] << 8);
+							settings.devices[var].ch[0].PWM =
+									RX_buff[0] | (RX_buff[1] << 8) | (RX_buff[2] << 16) | (RX_buff[3] << 24);
 
-					settings.devices[var].ch[0].IsOn = RX_buff[6];
+							settings.devices[var].ch[0].Current = RX_buff[4] | (RX_buff[5] << 8);
 
-					// ch1 *******************************************************
+							settings.devices[var].ch[0].IsOn = RX_buff[6];
 
-					settings.devices[var].ch[1].PWM =
-							RX_buff[7] | (RX_buff[8] << 8) | (RX_buff[9] << 16) | (RX_buff[10] << 24);
+							// ch1 *******************************************************
 
-					settings.devices[var].ch[1].Current = RX_buff[11] | (RX_buff[12] << 8);
+							settings.devices[var].ch[1].PWM =
+									RX_buff[7] | (RX_buff[8] << 8) | (RX_buff[9] << 16) | (RX_buff[10] << 24);
 
-					settings.devices[var].ch[1].IsOn = RX_buff[13];
+							settings.devices[var].ch[1].Current = RX_buff[11] | (RX_buff[12] << 8);
 
-					// ch2 *******************************************************
+							settings.devices[var].ch[1].IsOn = RX_buff[13];
 
-					settings.devices[var].ch[2].PWM =
-							RX_buff[14] | (RX_buff[15] << 8) | (RX_buff[16] << 16) | (RX_buff[17] << 24);
+							// ch2 *******************************************************
 
-					settings.devices[var].ch[2].Current = RX_buff[18] | (RX_buff[19] << 8);
+							settings.devices[var].ch[2].PWM =
+									RX_buff[14] | (RX_buff[15] << 8) | (RX_buff[16] << 16) | (RX_buff[17] << 24);
 
-					settings.devices[var].ch[2].IsOn = RX_buff[20];
+							settings.devices[var].ch[2].Current = RX_buff[18] | (RX_buff[19] << 8);
 
-					//передаем данные в устройство
+							settings.devices[var].ch[2].IsOn = RX_buff[20];
 
-					// ch0 *******************************************************
-					//var = var - 2;
+							settings.devices[var].TypePCB = (PCBType)RX_buff[22];
+							settings.devices[var].AddrFromDev = RX_buff[21];
+							break;
+						}else{
+							osDelay(1);
+						}
 
-					TX_buff[0] = settings.devices[var].ch[0].PWM_out & 0xFF;
-					TX_buff[1] = (settings.devices[var].ch[0].PWM_out >> 8) & 0xFF;
-					TX_buff[2] = (settings.devices[var].ch[0].PWM_out >> 16) & 0xFF;
-					TX_buff[3] = (settings.devices[var].ch[0].PWM_out >> 24) & 0xFF;
-
-					TX_buff[4] = settings.devices[var].ch[0].On_off;
-
-					// ch1 *******************************************************
-					//++var;
-					TX_buff[5] = settings.devices[var].ch[1].PWM_out & 0xFF;
-					TX_buff[6] = (settings.devices[var].ch[1].PWM_out >> 8) & 0xFF;
-					TX_buff[7] = (settings.devices[var].ch[1].PWM_out >> 16) & 0xFF;
-					TX_buff[8] = (settings.devices[var].ch[1].PWM_out >> 24) & 0xFF;
-
-					TX_buff[9] = settings.devices[var].ch[1].On_off;
-
-					// ch2 *******************************************************
-					//++var;
-					TX_buff[10] = settings.devices[var].ch[2].PWM_out & 0xFF;
-					TX_buff[11] = (settings.devices[var].ch[2].PWM_out >> 8) & 0xFF;
-					TX_buff[12] = (settings.devices[var].ch[2].PWM_out >> 16) & 0xFF;
-					TX_buff[13] = (settings.devices[var].ch[2].PWM_out >> 24) & 0xFF;
-
-					TX_buff[14] = settings.devices[var].ch[2].On_off;
-
-					osDelay(5);
-					status1 = HAL_I2C_Master_Transmit(&hi2c1,
-							(uint16_t)settings.devices[var].I2C_addr << 1, TX_buff, 15, 100);
-
+					}
 				}
 
-				osDelay(5);
 			}
-
+			osDelay(1);
 		}
 
-		osDelay(100);
+		//osDelay(10);
 	}
-  /* USER CODE END mainTask */
+	/* USER CODE END mainTask */
 }
 
 /* USER CODE BEGIN Header_led */
@@ -324,7 +334,7 @@ void mainTask(void const * argument)
 /* USER CODE END Header_led */
 void led(void const * argument)
 {
-  /* USER CODE BEGIN led */
+	/* USER CODE BEGIN led */
 	/* Infinite loop */
 	HAL_GPIO_WritePin(R_GPIO_Port, R_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(G_GPIO_Port, G_Pin, GPIO_PIN_SET);
@@ -381,7 +391,7 @@ void led(void const * argument)
 		//taskYIELD();
 		//osDelayUntil(&tickcount, 1); // задача будет вызываься ровро через 1 милисекунду
 	}
-  /* USER CODE END led */
+	/* USER CODE END led */
 }
 
 /* USER CODE BEGIN Header_eth_Task */
@@ -393,7 +403,7 @@ void led(void const * argument)
 /* USER CODE END Header_eth_Task */
 void eth_Task(void const * argument)
 {
-  /* USER CODE BEGIN eth_Task */
+	/* USER CODE BEGIN eth_Task */
 
 	while(gnetif.ip_addr.addr == 0){osDelay(1);}	//ждем получение адреса
 	LED_IPadr.LEDon();
@@ -456,7 +466,7 @@ void eth_Task(void const * argument)
 		}
 		osDelay(1);
 	}
-  /* USER CODE END eth_Task */
+	/* USER CODE END eth_Task */
 }
 
 /* Private application code --------------------------------------------------*/
@@ -472,42 +482,11 @@ void HAL_TIM_IC_CaptureCallback (TIM_HandleTypeDef *htim)
 	}
 }
 
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart){
 
-void HAL_I2C_MasterTxCpltCallback (I2C_HandleTypeDef * hi2c)
-{
-	txRedy = 1;
-	// TX Done .. Do Something!
 }
-
-void HAL_I2C_MasterRxCpltCallback (I2C_HandleTypeDef * hi2c)
-{
-	// RX Done .. Do Something!
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
+	HAL_UART_DMAStop(huart);
+	rx_end = 1;
 }
-
-
-/*void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c){
-	switch (HAL_I2C_GetError(hi2c)) {
-		case HAL_I2C_ERROR_AF:
-
-			break;
-		case HAL_I2C_ERROR_BERR:
-
-			break;
-		case HAL_I2C_ERROR_ARLO:
-
-			break;
-		case HAL_I2C_ERROR_OVR:
-
-			break;
-		case HAL_I2C_ERROR_TIMEOUT:
-
-			break;
-		case HAL_I2C_WRONG_START:
-
-			break;
-		default:
-			break;
-	}
-}
-*/
 /* USER CODE END Application */
