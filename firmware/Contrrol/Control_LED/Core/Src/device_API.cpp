@@ -246,21 +246,48 @@ string Сommand_execution(string in_str){
 					arr_cmd[i].err = "OK";
 					break;
 				case 4: // Chanel on/off
-					if(NameCH[arr_cmd[i].data_in1].dev != NULL){
-						uint8_t c = NameCH[arr_cmd[i].data_in1].Channel_number; // get channel number for this name
-						NameCH[arr_cmd[i].data_in1].dev->ch[c].On_off = arr_cmd[i].data_in;
+					// mode set all channel
+					if (arr_cmd[i].addres_var >= 1) {
+						uint8_t c = 0;
+						for (int name = 0; name < MAX_CH_NAME; ++name) {
+							if(NameCH[name].dev != NULL){
+								c = NameCH[name].Channel_number; // get channel number for this name
+								NameCH[name].dev->ch[c].On_off = arr_cmd[i].data_in;
+							}
+						}
 						arr_cmd[i].err = "OK";
-					}else{
-						arr_cmd[i].err = "NULL ptr dev";
+					} else {
+						// mode set one channel
+						if(NameCH[arr_cmd[i].data_in1].dev != NULL){
+							uint8_t c = NameCH[arr_cmd[i].data_in1].Channel_number; // get channel number for this name
+							NameCH[arr_cmd[i].data_in1].dev->ch[c].On_off = arr_cmd[i].data_in;
+							arr_cmd[i].err = "OK";
+						}else{
+							arr_cmd[i].err = "NULL ptr dev";
+						}
 					}
+
 					break;
 				case 5: // PWM set to Channel
-					if(NameCH[arr_cmd[i].data_in1].dev != NULL){
-						uint8_t c = NameCH[arr_cmd[i].data_in1].Channel_number; // get channel number for this name
-						NameCH[arr_cmd[i].data_in1].dev->ch[c].PWM_out = arr_cmd[i].data_in;
+					// mode set all channel
+					if (arr_cmd[i].addres_var >= 1) {
+						uint8_t c = 0;
+						for (int name = 0; name < MAX_CH_NAME; ++name) {
+							if(NameCH[name].dev != NULL){
+								c = NameCH[name].Channel_number; // get channel number for this name
+								NameCH[name].dev->ch[c].PWM_out = arr_cmd[i].data_in;
+							}
+						}
 						arr_cmd[i].err = "OK";
-					}else{
-						arr_cmd[i].err = "NULL ptr dev";
+					} else {
+						// mode set one channel
+						if(NameCH[arr_cmd[i].data_in1].dev != NULL){
+							uint8_t c = NameCH[arr_cmd[i].data_in1].Channel_number; // get channel number for this name
+							NameCH[arr_cmd[i].data_in1].dev->ch[c].PWM_out = arr_cmd[i].data_in;
+							arr_cmd[i].err = "OK";
+						}else{
+							arr_cmd[i].err = "NULL ptr dev";
+						}
 					}
 					break;
 				case 6: // PWM read from channel
