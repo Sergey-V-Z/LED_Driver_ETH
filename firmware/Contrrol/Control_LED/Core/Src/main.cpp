@@ -131,7 +131,7 @@ int main(void)
 	HAL_GPIO_WritePin(HOLD_GPIO_Port, HOLD_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(WP_GPIO_Port, WP_Pin, GPIO_PIN_SET);
 
-	mem_spi.Init(&hspi3, 0, ChipSelect, WriteProtect, Hold);
+	mem_spi.Init(&hspi3, 0, ChipSelect, WriteProtect, Hold, false);
 
 	mem_spi.Read(&settings);
 
@@ -242,7 +242,7 @@ int main(void)
 		settings.MAC[4] = 0x44;
 		settings.MAC[5] = endMAC;
 
-		settings.version = 12;
+		settings.version = 13;
 
 		//setRange_i2c_dev(16, 8);
 
