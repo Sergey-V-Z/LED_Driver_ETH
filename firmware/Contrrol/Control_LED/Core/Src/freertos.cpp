@@ -438,7 +438,7 @@ void eth_Task(void const * argument)
 					accept_err=netconn_accept(conn,&newconn);//suspend until new connection
 					if (accept_err==ERR_OK)
 					{
-						//LED_IPadr.LEDon();
+						LED_IPadr.LEDon();
 						while ((accept_err=netconn_recv(newconn,&netbuf))==ERR_OK)//работаем до тех пор пока клиент не разорвет соеденение
 						{
 
@@ -458,7 +458,7 @@ void eth_Task(void const * argument)
 						}
 						netconn_close(newconn);
 						netconn_delete(newconn);
-						//LED_IPadr.LEDoff();
+						LED_IPadr.LEDoff();
 					} else netconn_delete(newconn);
 					osDelay(20);
 				}

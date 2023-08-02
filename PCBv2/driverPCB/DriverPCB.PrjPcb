@@ -28,7 +28,7 @@ DItemRevisionGUID=
 ReportSuppressedErrorsInMessages=0
 FSMCodingStyle=eFMSDropDownList_OneProcess
 FSMEncodingStyle=eFMSDropDownList_OneHot
-OutputPath=Project Outputs for DriverPCB
+OutputPath=
 LogFolderPath=
 ManagedProjectGUID=
 IncludeDesignInRelease=0
@@ -223,10 +223,6 @@ DItemRevisionGUID=
 DocumentPath=Project Outputs for DriverPCB\Pick Place\Pick Place for DriverPCB.txt
 DItemRevisionGUID=
 
-[GeneratedDocument22]
-DocumentPath=C:\Users\IERIXO~1\AppData\Local\Temp\ProD757.xls
-DItemRevisionGUID=
-
 [Configuration1]
 Name=Sources
 ParameterCount=0
@@ -274,7 +270,7 @@ SCH_HasExpandLogicalToPhysicalSheets=-1
 SaveSettingsToOutJob=-1
 
 [Generic_EDE]
-OutputDir=Project Outputs for DriverPCB
+OutputDir=
 
 [OutputGroup1]
 Name=Netlist Outputs
