@@ -172,7 +172,7 @@ int main(void)
 			en1 = aRxBuffer[5];
 			PWM2 = aRxBuffer[6] |(aRxBuffer[7] << 8)|(aRxBuffer[8] << 16)|(aRxBuffer[9] << 24);
 			en2 = aRxBuffer[10];
-			PWM3 = aRxBuffer[11] |(aRxBuffer[11] << 8)|(aRxBuffer[13] << 16)|(aRxBuffer[14] << 24);
+			PWM3 = aRxBuffer[11] |(aRxBuffer[12] << 8)|(aRxBuffer[13] << 16)|(aRxBuffer[14] << 24);
 			en3 = aRxBuffer[15];
 
 			for (int i = 0; i < RXBUFFERSIZE; ++i) {
@@ -319,7 +319,7 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 
                 if (er & HAL_UART_ERROR_PE)
                 {
-                        __HAL_UART_CLEAR_PEFLAG(&huart1);
+                	__HAL_UART_CLEAR_PEFLAG(&huart1);
                 }
                 if (er & HAL_UART_ERROR_NE)
                 {
