@@ -106,6 +106,7 @@ typedef enum {
 	NoInit = 0,
 	LED_DRV = 10,
 	RELE = 20,
+	MOSFET_6CH = 30,
 }PCBType;
 
 typedef struct
